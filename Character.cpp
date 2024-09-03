@@ -1,34 +1,82 @@
+#include <vector>
 #include <string>
-#include "Move.cpp"
+#include "Move.h"
+#include "Character.h"
 
 using namespace std;
-class Character
-{
-public:
-	string name = "";
-	int hp = 0;
-	int atk = 0;
-	Move moves[4] = { Move(), Move(), Move(), Move() };
 
-	Character(string name, int hp, int atk);
-	Character(string name, int hp, int atk, Move* moves);
-};
-
-Character::Character(string name, int hp, int atk)
+Character::Character(string name, int hp, int atk, int def)
 {
 	this->name = name;
 	this->hp = hp;
+	this->atk = atk;
+	this->def = def;
+}
+
+Character::Character(string name, int hp, int atk, int def, vector<Move*>* moves)
+{
+	this->name = name;
+	this->hp = hp;
+	this->atk = atk;
+	this->def = def;
+	this->moves = *moves;
+}
+
+Character::~Character()
+{
+}
+
+string Character::getName()
+{
+	return name;
+}
+
+int Character::getHP()
+{
+	return hp;
+}
+
+int Character::getATK()
+{
+	return atk;
+}
+
+int Character::getDEF()
+{
+	return def;
+}
+
+vector<Move*> Character::getMoves()
+{
+	return moves;
+}
+
+void Character::setName(string name)
+{
+	this->name = name;
+}
+
+void Character::setHP(int hp)
+{
+	this->hp = hp;
+}
+
+void Character::setATK(int atk)
+{
 	this->atk = atk;
 }
 
-Character::Character(string name, int hp, int atk, Move* moves)
+void Character::setDEF(int def)
 {
-	this->name = name;
-	this->hp = hp;
-	this->atk = atk;
+	this->def = def;
+}
 
-	for (int i = 0; i < 4; i++)
-	{
-		this->moves[i] = moves[i];
-	}
+void Character::setMoves(vector<Move*>* moves)
+{
+	this->moves = *moves;
+}
+
+void Character::addMove(Move* move)
+{
+	moves.push_back(move);
 }
