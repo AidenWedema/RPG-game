@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <stdlib.h>
 #include "Character.h"
 #include "Move.h"
 
@@ -43,13 +44,17 @@ int main()
 
 void Start()
 {
+	system("cls");
 	cout << "What is your name?\n";
 	string name;
 	cin >> name;
 	player.setName(name);
+
+	system("cls");
 	cout << "Hello " << player.getName() << "\n";
-	cin;
-	cout << "A " << enemy.getName() << " attacks!\n";
+	cin.get();
+	system("cls");
+	cout << "A " << enemy.getName() << " attacks!\n\n";
 
 	for (int i = 0; i < 8; i++)
 	{
@@ -60,6 +65,9 @@ void Start()
 		else
 			enemy.addMove(m);
 	}
+
+	cin.get();
+	system("cls");
 
 	Battle();
 }
@@ -128,22 +136,29 @@ void Battle()
 		damage = enemy.getATK() + enemymove->getPOW();
 		cout << player.getName() << " takes " << damage << " damage!\n";
 		player.setHP(player.getHP() - damage);
+
 		if (player.getHP() <= 0)
 		{
 			Lose();
 			break;
 		}
+		cin.get();
+		system("cls");
 
+		cout << "Your HP: " << player.getHP() << "\n" << enemy.getName() << " HP: " << enemy.getHP() << "\n";
 		playermove = GetPlayerMove();
 		cout << player.getName() << " uses " << playermove->getName() << "!\n";
 		damage = player.getATK() + playermove->getPOW();
 		cout << enemy.getName() << " takes " << damage << " damage!\n";
 		enemy.setHP(enemy.getHP() - damage);
+
 		if (enemy.getHP() <= 0)
 		{
 			Win();
 			break;
 		}
+		cin.get();
+		system("cls");
 	}
 }
 
