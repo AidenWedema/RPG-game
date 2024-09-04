@@ -60,12 +60,26 @@ void Game::Start()
 		cout << "Goodbye";
 		return;
 	}
+	system("cls");
 	Battle();
 }
 
 void Game::Battle()
 {
-	vector<tuple<Move*, Character*, Character*>> moves; // stores the moves in order = (move, target, user)
+	string msg;
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		msg += enemies[i].getName();
+		if (i == enemies.size() - 2)
+			msg += " and ";
+		else if (i != enemies.size() - 1)
+			msg += ", ";
+	}
+	cout << msg << " attack!\n";
+	cin.get();
+	system("cls");
+
+	vector<tuple<Move*, Character*, Character*>> moves; // stores the moves in order. (move, target, user)
 	while (true)
 	{
 		// get the turn order and moves of each character in order
@@ -102,7 +116,7 @@ void Game::Battle()
 			Character* target = get<1>(m);
 			Character* user = get<2>(m);
 
-			string msg = user->getName();
+			msg = user->getName();
 			switch (move->getType())
 			{
 				case 0: // attack
