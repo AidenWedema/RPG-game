@@ -55,7 +55,7 @@ void Game::Start()
 	cout << "Are you ready for adventure?\n";
 	string in;
 	cin >> in;
-	if (in != "y" || in != "yes")
+	if (in != "y" && in != "yes")
 	{
 		cout << "Goodbye";
 		return;
@@ -322,7 +322,7 @@ tuple<Move*, Character*> Game::GetRandomMove(Character* character)
 	targets.erase(it, targets.end());
 
 	// get a random target
-	int in = rand() % targets.size();
+	in = rand() % targets.size();
 	Character* target = targets[in];
 	return tuple<Move*, Character*>(move, character);
 }
