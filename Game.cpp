@@ -63,12 +63,40 @@ void Game::Start()
 	system("cls");
 
 	// assign moves to each character
-	for (int i = 0; i < 4; i++)
+	for (Character* character : GetAllCharacters())
 	{
-		for (int j = 0; j < 4; j++)
+		vector<int> moveIndexes;
+		// get 4 random attack moves
+		for (int i = 0; i < 4; i++)
 		{
-
+			int r = rand() % get<0>(allMoves).size();
+			if (moveIndexes.size() == 0 || find(moveIndexes.begin(), moveIndexes.end(), r) == moveIndexes.end())
+				character->addMove(&get<0>(allMoves)[r]);
+			else
+				i--;
 		}
+		// add 3 random special moves
+		moveIndexes.clear();
+		for (int i = 0; i < 3; i++)
+		{
+			int r = rand() % get<1>(allMoves).size();
+			if (moveIndexes.size() == 0 || find(moveIndexes.begin(), moveIndexes.end(), r) == moveIndexes.end())
+				character->addMove(&get<1>(allMoves)[r]);
+			else
+				i--;
+		}
+		// add 3 random magic moves
+		moveIndexes.clear();
+		for (int i = 0; i < 3; i++)
+		{
+			int r = rand() % get<2>(allMoves).size();
+			if (moveIndexes.size() == 0 || find(moveIndexes.begin(), moveIndexes.end(), r) == moveIndexes.end())
+				character->addMove(&get<2>(allMoves)[r]);
+			else
+				i--;
+		}
+		// add the defend move
+		character->addMove(&get<3>(allMoves)[0]);
 	}
 
 	cout << "What is your name?\n";
