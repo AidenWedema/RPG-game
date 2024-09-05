@@ -12,6 +12,7 @@ Character::Character()
 	this->atk = 10;
 	this->def = 0;
 	this->spd = 0;
+	this->ID = 0;
 }
 
 Character::Character(string name, int hp, int atk, int def, int spd)
@@ -21,6 +22,7 @@ Character::Character(string name, int hp, int atk, int def, int spd)
 	this->atk = atk;
 	this->def = def;
 	this->spd = spd;
+	this->ID = 0;
 }
 
 Character::Character(string name, int hp, int atk, int def, int spd, vector<Move*>* moves)
@@ -31,6 +33,7 @@ Character::Character(string name, int hp, int atk, int def, int spd, vector<Move
 	this->def = def;
 	this->spd = spd;
 	this->moves = *moves;
+	this->ID = 0;
 }
 
 Character::~Character()
@@ -120,4 +123,14 @@ void Character::addModifier(tuple<string, int, int> modifier)
 void Character::removeModifier(tuple<string, int, int> modifier)
 {
 	modifiers.erase(remove(modifiers.begin(), modifiers.end(), modifier), modifiers.end());
+}
+
+int Character::getID()
+{
+	return ID;
+}
+
+void Character::setID(int ID)
+{
+	this->ID = ID;
 }

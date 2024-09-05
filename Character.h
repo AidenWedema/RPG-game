@@ -1,6 +1,6 @@
 #include <vector>
 #include <string>
-#include<tuple>
+#include <tuple>
 #include "Move.h"
 
 #pragma once
@@ -34,6 +34,12 @@ public:
 	void addModifier(tuple<string, int, int> modifier);
 	void removeModifier(tuple<string, int, int> modifier);
 
+	int getID();
+	void setID(int ID);
+	bool operator==(const Character& other) const {
+		return this->ID == other.ID; // or any other condition to compare characters
+	}
+
 private:
 	string name;
 	int hp;
@@ -42,4 +48,5 @@ private:
 	int spd;
 	vector<Move*> moves;
 	vector<tuple<string, int, int>> modifiers; // (modified stat, value change for stat, amount of turns left)
+	int ID;
 };
