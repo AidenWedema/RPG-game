@@ -21,6 +21,7 @@ public:
 	tuple<Move*, Character*> GetRandomMove(Character* character);
 	void Win();
 	void Lose();
+	vector<Character*> GetAllCharacters();
 
 private:
 	Character player;

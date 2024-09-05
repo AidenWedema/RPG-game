@@ -61,6 +61,24 @@ void Game::Start()
 		return;
 	}
 	system("cls");
+
+	// assign moves to each character
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+
+		}
+	}
+
+	cout << "What is your name?\n";
+	cin >> in;
+	player.setName(in);
+	system("cls");
+	cout << "Hello " << player.getName() << "\n";
+	cin.get();
+	system("cls");
+
 	Battle();
 }
 
@@ -76,7 +94,7 @@ void Game::Battle()
 			msg += ", ";
 	}
 	cout << msg << " attack!\n";
-	cin.get();
+	cin.ignore();
 	system("cls");
 
 	vector<tuple<Move*, Character*, Character*>> moves; // stores the moves in order. (move, target, user)
@@ -207,13 +225,7 @@ void Game::Battle()
 
 vector<Character*> Game::GetTurnOrder()
 {
-	vector<Character*> allCharacters;
-
-	allCharacters.push_back(&player);
-	for (Character f : friends)
-		allCharacters.push_back(&f);
-	for (Character e : enemies)
-		allCharacters.push_back(&e);
+	vector<Character*> allCharacters = GetAllCharacters();
 
 	// apply speed modifiers
 	for (Character* c : allCharacters)
@@ -301,7 +313,7 @@ tuple<Move*, Character*> Game::GetPlayerMove()
 				catch (const exception& e)
 				{
 					cout << "Invalid input" << "\n";
-					cin.get();
+					cin.ignore();
 					system("cls");
 				}
 				break;
@@ -309,7 +321,7 @@ tuple<Move*, Character*> Game::GetPlayerMove()
 			// default try again
 			default:
 				cout << "Invalid input" << "\n";
-				cin.get();
+				cin.ignore();
 				system("cls");
 				break;
 		}
@@ -323,12 +335,7 @@ tuple<Move*, Character*> Game::GetRandomMove(Character* character)
 	Move* move = character->getMoves()[in];
 
 	// get all targets
-	vector<Character*> targets;
-	targets.push_back(&player);
-	for (Character f : friends)
-		targets.push_back(&f);
-	for (Character e : enemies)
-		targets.push_back(&e);
+	vector<Character*> targets = GetAllCharacters();
 
 	// check duplicate targets and remove them
 	sort(targets.begin(), targets.end());
@@ -349,4 +356,17 @@ void Game::Win()
 void Game::Lose()
 {
 	cout << "You died!\n";
+}
+
+vector<Character*> Game::GetAllCharacters()
+{
+	vector<Character*> allCharacters;
+
+	allCharacters.push_back(&player);
+	for (Character f : friends)
+		allCharacters.push_back(&f);
+	for (Character e : enemies)
+		allCharacters.push_back(&e);
+
+	return allCharacters;
 }
