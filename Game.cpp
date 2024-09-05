@@ -297,7 +297,6 @@ tuple<Move*, Character*> Game::GetPlayerMove()
 			case 0:
 			case 1:
 			case 2:
-			case 3:
 				cout << "Your moves:\n";
 				for (Move* move : player.getMoves())
 				{
@@ -346,6 +345,11 @@ tuple<Move*, Character*> Game::GetPlayerMove()
 				}
 				break;
 
+			case 3:
+				move = &get<3>(allMoves)[0];
+				target = &player;
+				return make_tuple(move, target);
+
 			// default try again
 			default:
 				cout << "Invalid input" << "\n";
@@ -359,21 +363,75 @@ tuple<Move*, Character*> Game::GetPlayerMove()
 tuple<Move*, Character*> Game::GetRandomMove(Character* character)
 {
 	// get a random move
-	int in = rand() % 4;
+	int in = rand() % character->getMoves().size();
 	Move* move = character->getMoves()[in];
+	Character* target;
 
-	// get all targets
-	vector<Character*> targets = GetAllCharacters();
+	vector<Character*> targets;
+	if (move->Damaging())
+	{
+		int damage;
+		damage = character->getATK() + move->getPOW();
+		// check if character is a friend or enemy
+		if (find(friends.begin(), friends.end(), character) != friends.end())
+		{
+			for (Character e : enemies)
+				targets.push_back(&e);
+		}
+		else
+		{
+			targets.push_back(&player);
+			for (Character f : friends)
+				targets.push_back(&f);
+		}
+		// check all characters to see if the attack can kill the target
+		for (Character* t : targets)
+		{
+			if (t->getHP() - damage <= 0)
+				target = t;
+		}
+	}
+	// check if the move is a heal or a special buff
+	else if (move->getName().find("Heal") != string::npos && (move->getType() == 1 && move->getName().find(" up") != string::npos))
+	{
+		// check if character is a friend or enemy
+		if (find(friends.begin(), friends.end(), character) != friends.end())
+		{
+			targets.push_back(&player);
+			for (Character f : friends)
+				targets.push_back(&f);
+		}
+		else
+		{
+			for (Character e : enemies)
+				targets.push_back(&e);
+		}
+		int r = rand() % targets.size();
+		target = targets[r];
+	}
+	// check if the move is a special debuff
+	else if (move->getType() == 1 && move->getName().find(" down") != string::npos)
+	{
+		// check if character is a friend or enemy
+		if (find(friends.begin(), friends.end(), character) != friends.end())
+		{
+			for (Character e : enemies)
+				targets.push_back(&e);
+		}
+		else
+		{
+			targets.push_back(&player);
+			for (Character f : friends)
+				targets.push_back(&f);
+		}
+		int r = rand() % targets.size();
+		target = targets[r];
+	}
+	// check if the move is of type 3 (defence)
+	else if (move->getType() == 3)
+		target = character;
 
-	// check duplicate targets and remove them
-	sort(targets.begin(), targets.end());
-	auto it = unique(targets.begin(), targets.end());
-	targets.erase(it, targets.end());
-
-	// get a random target
-	in = rand() % targets.size();
-	Character* target = targets[in];
-	return tuple<Move*, Character*>(move, character);
+	return make_tuple(move, target);
 }
 
 void Game::Win()
