@@ -164,21 +164,17 @@ void Game::Battle()
 				continue;
 			}
 
-			vector<tuple<string, int, int>*> modifiers;
 			// check the character for expired modifiers and remove them
-			for (tuple<string, int, int> mod : c->getModifiers())
+			for (tuple<string, int, int>* mod : c->getModifiers())
 			{
-				tuple<string, int, int> newMod = make_tuple(get<0>(mod), get<1>(mod), get<2>(mod) - 1);
-				c->removeModifier(mod);
-				if (get<2>(newMod) > 0)
-					modifiers.push_back(&newMod);
+				get<2>(*mod) -= 1;
+				if (get<2>(*mod) <= 0)
+					c->removeModifier(mod);
 			}
-			for (tuple<string, int, int>* mod : modifiers)
-				c->addModifier(*mod);
 
 			msg += c->getName() + ": \nHP: " + to_string(c->getHP()) + "\n";
-			for (tuple<string, int, int> mod : c->getModifiers())
-				msg += get<0>(mod) + ": " + to_string(get<1>(mod)) + " for " + to_string(get<2>(mod)) + " turn(s)\n";
+			for (tuple<string, int, int>* mod : c->getModifiers())
+				msg += get<0>(*mod) + ": " + to_string(get<1>(*mod)) + " for " + to_string(get<2>(*mod)) + " turn(s)\n";
 			msg += "\n";
 		}
 		cout << msg;
@@ -245,16 +241,16 @@ void Game::Battle()
 			if (action->getMove()->Damaging())
 			{
 				int damage = action->getUser()->getATK() + action->getMove()->getPOW();
-				for (tuple<string, int, int> mod : action->getUser()->getModifiers())
+				for (tuple<string, int, int>* mod : action->getUser()->getModifiers())
 				{
-					if (get<0>(mod) == "ATK")
-						damage += get<1>(mod);
+					if (get<0>(*mod) == "ATK")
+						damage += get<1>(*mod);
 				}
 				int def = target->getDEF();
-				for (tuple<string, int, int> mod : action->getTarget()->getModifiers())
+				for (tuple<string, int, int>* mod : action->getTarget()->getModifiers())
 				{
-					if (get<0>(mod) == "DEF")
-						def += get<1>(mod);
+					if (get<0>(*mod) == "DEF")
+						def += get<1>(*mod);
 				}
 				if (def > damage)
 					damage = 0;
@@ -293,8 +289,13 @@ void Game::Battle()
 				{
 					moveName = action->getMove()->getName().substr(0, action->getMove()->getName().find(" down"));
 					msg = action->getTarget()->getName() + "s " + moveName + " lowered by " + to_string(mod) + "!";
+					mod *= -1;
 				}
-				action->getTarget()->addModifier(make_tuple(moveName, mod, 3));
+				tuple<string, int, int>* m = new tuple<string, int, int>;
+				get<0>(*m) = moveName;
+				get<1>(*m) = mod;
+				get<2>(*m) = 3;
+				action->getTarget()->addModifier(m);
 				cout << msg << "\n";
 				cin.ignore();
 				system("cls");
@@ -304,7 +305,11 @@ void Game::Battle()
 			if (action->getMove()->getType() == 3)
 			{
 				// add a +1000 defence modifier to the target for 0 turns, IE. make them invincible this turn
-				action->getTarget()->addModifier(make_tuple("DEF", 1000, 0));
+				tuple<string, int, int>* m = new tuple<string, int, int>;
+				get<0>(*m) = "DEF";
+				get<1>(*m) = 1000;
+				get<2>(*m) = 0;
+				action->getTarget()->addModifier(m);
 				continue;
 			}
 		}
@@ -318,10 +323,10 @@ vector<Character*> Game::GetTurnOrder()
 	// apply speed modifiers
 	for (Character* c : *allCharacters)
 	{
-		for (tuple<string, int, int> mod : c->getModifiers())
+		for (tuple<string, int, int>* mod : c->getModifiers())
 		{
-			if (get<0>(mod) == "SPD")
-				c->setSPD(c->getSPD() + get<1>(mod));
+			if (get<0>(*mod) == "SPD")
+				c->setSPD(c->getSPD() + get<1>(*mod));
 		}
 	}
 
@@ -330,10 +335,10 @@ vector<Character*> Game::GetTurnOrder()
 	// remove speed modifiers
 	for (Character* c : *allCharacters)
 	{
-		for (tuple<string, int, int> mod : c->getModifiers())
+		for (tuple<string, int, int>* mod : c->getModifiers())
 		{
-			if (get<0>(mod) == "SPD")
-				c->setSPD(c->getSPD() - get<1>(mod));
+			if (get<0>(*mod) == "SPD")
+				c->setSPD(c->getSPD() - get<1>(*mod));
 		}
 	}
 

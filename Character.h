@@ -19,7 +19,7 @@ public:
 	int getSPD();
 	vector<Move*> getMoves();
 
-	vector<tuple<string, int, int>> getModifiers();
+	vector<tuple<string, int, int>*> getModifiers();
 
 	void setName(string name);
 	void setHP(int hp);
@@ -29,10 +29,10 @@ public:
 	void setMoves(vector<Move*>* moves);
 	void addMove(Move* move);
 
-	void setModifiers(vector<tuple<string, int, int>> modifiers);
+	void setModifiers(vector<tuple<string, int, int>*> modifiers);
 
-	void addModifier(tuple<string, int, int> modifier);
-	void removeModifier(tuple<string, int, int> modifier);
+	void addModifier(tuple<string, int, int>* modifier);
+	void removeModifier(tuple<string, int, int>* modifier);
 
 	int getID();
 	void setID(int ID);
@@ -47,6 +47,6 @@ private:
 	int def;
 	int spd;
 	vector<Move*> moves;
-	vector<tuple<string, int, int>> modifiers; // (modified stat, value change for stat, amount of turns left)
+	vector<tuple<string, int, int>*> modifiers; // (modified stat, value change for stat, amount of turns left)
 	int ID;
 };

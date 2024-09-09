@@ -68,7 +68,7 @@ vector<Move*> Character::getMoves()
 	return moves;
 }
 
-vector<tuple<string, int, int>> Character::getModifiers()
+vector<tuple<string, int, int>*> Character::getModifiers()
 {
 	return modifiers;
 }
@@ -108,17 +108,17 @@ void Character::addMove(Move* move)
 	moves.push_back(move);
 }
 
-void Character::setModifiers(vector<tuple<string, int, int>> modifiers)
+void Character::setModifiers(vector<tuple<string, int, int>*> modifiers)
 {
 	this->modifiers = modifiers;
 }
 
-void Character::addModifier(tuple<string, int, int> modifier)
+void Character::addModifier(tuple<string, int, int>* modifier)
 {
 	modifiers.push_back(modifier);
 }
 
-void Character::removeModifier(tuple<string, int, int> modifier)
+void Character::removeModifier(tuple<string, int, int>* modifier)
 {
 	modifiers.erase(remove(modifiers.begin(), modifiers.end(), modifier), modifiers.end());
 }
