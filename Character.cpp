@@ -3,8 +3,6 @@
 #include "Move.h"
 #include "Character.h"
 
-using namespace std;
-
 Character::Character()
 {
 	this->name = "PLAYER_NAME";

@@ -36,8 +36,8 @@ public:
 
 	int getID();
 	void setID(int ID);
-	bool operator==(const Character& other) const {
-		return this->ID == other.ID; // or any other condition to compare characters
+	bool operator==(const Character* other) const {
+		return this->ID == other->ID;
 	}
 
 private:

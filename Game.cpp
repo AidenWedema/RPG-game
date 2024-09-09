@@ -2,47 +2,51 @@
 
 Game::Game()
 {
-	player = Character("", 100, 10, 0, 0);
-	friends = vector<Character> { Character("Jimmy", 100, 10, 0, 0) };
-	enemies = vector<Character> { Character("Slime", 100, 10, 0, 0), Character("Slime", 100, 10, 0, 0) };
-	allMoves = tuple<vector<Move>, vector<Move>, vector<Move>, vector<Move>>();
+	player = new Character("PLAYER", 100, 10, 0, 0);
+	friends = vector<Character*> { new Character("Jimmy", 100, 10, 0, 0) };
+	enemies = vector<Character*> { new Character("Slime", 100, 10, 0, 0), new Character("Slime", 100, 10, 0, 0) };
+	allMoves = make_tuple(new vector<Move*>, new vector<Move*>, new vector<Move*>, new vector<Move*>);
+
+	vector<Character*>* all = GetAllCharacters();
+	for (int i = 0; i < all->size(); i++)
+		(*all)[i]->setID(i);
 
 	// set up attack moves
-	get<0>(allMoves).push_back(Move("Punch", 10, 95, 0, true));
-	get<0>(allMoves).push_back(Move("Kick", 20, 80, 0, true));
-	get<0>(allMoves).push_back(Move("JumpKick", 30, 75, 0, true));
-	get<0>(allMoves).push_back(Move("HighJumpKick", 40, 60, 0, true));
-	get<0>(allMoves).push_back(Move("Headbutt", 50, 40, 0, true));
-	get<0>(allMoves).push_back(Move("Tackle", 20, 90, 0, true));
-	get<0>(allMoves).push_back(Move("Bite", 50, 50, 0, true));
-	get<0>(allMoves).push_back(Move("Slap", 20, 90, 0, true));
-	get<0>(allMoves).push_back(Move("Scratch", 30, 90, 0, true));
-	get<0>(allMoves).push_back(Move("Throw", 15, 75, 0, true));
+	get<0>(allMoves)->push_back(new Move("Punch", 10, 95, 0, true));
+	get<0>(allMoves)->push_back(new Move("Kick", 20, 80, 0, true));
+	get<0>(allMoves)->push_back(new Move("JumpKick", 30, 75, 0, true));
+	get<0>(allMoves)->push_back(new Move("HighJumpKick", 40, 60, 0, true));
+	get<0>(allMoves)->push_back(new Move("Headbutt", 50, 40, 0, true));
+	get<0>(allMoves)->push_back(new Move("Tackle", 20, 90, 0, true));
+	get<0>(allMoves)->push_back(new Move("Bite", 50, 50, 0, true));
+	get<0>(allMoves)->push_back(new Move("Slap", 20, 90, 0, true));
+	get<0>(allMoves)->push_back(new Move("Scratch", 30, 90, 0, true));
+	get<0>(allMoves)->push_back(new Move("Throw", 15, 75, 0, true));
 
 	// set up special moves
-	get<1>(allMoves).push_back(Move("ATK up", 10, 95, 1, false));
-	get<1>(allMoves).push_back(Move("DEF up", 10, 95, 1, false));
-	get<1>(allMoves).push_back(Move("SPD up", 10, 95, 1, false));
-	get<1>(allMoves).push_back(Move("ATK down", 10, 95, 1, false));
-	get<1>(allMoves).push_back(Move("DEF down", 10, 95, 1, false));
-	get<1>(allMoves).push_back(Move("SPD down", 10, 95, 1, false));
+	get<1>(allMoves)->push_back(new Move("ATK up", 10, 95, 1, false));
+	get<1>(allMoves)->push_back(new Move("DEF up", 10, 95, 1, false));
+	get<1>(allMoves)->push_back(new Move("SPD up", 10, 95, 1, false));
+	get<1>(allMoves)->push_back(new Move("ATK down", 10, 95, 1, false));
+	get<1>(allMoves)->push_back(new Move("DEF down", 10, 95, 1, false));
+	get<1>(allMoves)->push_back(new Move("SPD down", 10, 95, 1, false));
 
 	// set up magic moves
-	get<2>(allMoves).push_back(Move("Ember", 20, 60, 2, true));
-	get<2>(allMoves).push_back(Move("Fire", 30, 70, 2, true));
-	get<2>(allMoves).push_back(Move("FireBall", 40, 80, 2, true));
-	get<2>(allMoves).push_back(Move("Splash", 20, 60, 2, true));
-	get<2>(allMoves).push_back(Move("Wave", 20, 60, 2, true));
-	get<2>(allMoves).push_back(Move("Tsunami", 20, 60, 2, true));
-	get<2>(allMoves).push_back(Move("Spark", 20, 60, 2, true));
-	get<2>(allMoves).push_back(Move("Shock", 20, 60, 2, true));
-	get<2>(allMoves).push_back(Move("Thunder", 20, 60, 2, true));
-	get<2>(allMoves).push_back(Move("Heal", 10, 60, 2, false));
-	get<2>(allMoves).push_back(Move("MegaHeal", 20, 60, 2, false));
-	get<2>(allMoves).push_back(Move("GigaHeal", 40, 60, 2, false));
+	get<2>(allMoves)->push_back(new Move("Ember", 20, 60, 2, true));
+	get<2>(allMoves)->push_back(new Move("Fire", 30, 70, 2, true));
+	get<2>(allMoves)->push_back(new Move("FireBall", 40, 80, 2, true));
+	get<2>(allMoves)->push_back(new Move("Splash", 20, 60, 2, true));
+	get<2>(allMoves)->push_back(new Move("Wave", 20, 60, 2, true));
+	get<2>(allMoves)->push_back(new Move("Tsunami", 20, 60, 2, true));
+	get<2>(allMoves)->push_back(new Move("Spark", 20, 60, 2, true));
+	get<2>(allMoves)->push_back(new Move("Shock", 20, 60, 2, true));
+	get<2>(allMoves)->push_back(new Move("Thunder", 20, 60, 2, true));
+	get<2>(allMoves)->push_back(new Move("Heal", 10, 60, 2, false));
+	get<2>(allMoves)->push_back(new Move("MegaHeal", 20, 60, 2, false));
+	get<2>(allMoves)->push_back(new Move("GigaHeal", 40, 60, 2, false));
 
 	// set up defence moves
-	get<3>(allMoves).push_back(Move("Defend", 0, 0, 3, false));
+	get<3>(allMoves)->push_back(new Move("Defend", 0, 100, 3, false));
 }
 
 Game::~Game()
@@ -63,15 +67,19 @@ void Game::Start()
 	system("cls");
 
 	// assign moves to each character
-	for (Character* character : GetAllCharacters())
+	vector<Character*>* all = GetAllCharacters();
+	for (Character* character : *all)
 	{
 		vector<int> moveIndexes;
 		// get 4 random attack moves
 		for (int i = 0; i < 4; i++)
 		{
-			int r = rand() % get<0>(allMoves).size();
+			int r = rand() % get<0>(allMoves)->size();
 			if (moveIndexes.size() == 0 || find(moveIndexes.begin(), moveIndexes.end(), r) == moveIndexes.end())
-				character->addMove(&get<0>(allMoves)[r]);
+			{
+				character->addMove((*get<0>(allMoves))[r]);
+				moveIndexes.push_back(r);
+			}
 			else
 				i--;
 		}
@@ -79,9 +87,12 @@ void Game::Start()
 		moveIndexes.clear();
 		for (int i = 0; i < 3; i++)
 		{
-			int r = rand() % get<1>(allMoves).size();
+			int r = rand() % get<1>(allMoves)->size();
 			if (moveIndexes.size() == 0 || find(moveIndexes.begin(), moveIndexes.end(), r) == moveIndexes.end())
-				character->addMove(&get<1>(allMoves)[r]);
+			{
+				character->addMove((*get<1>(allMoves))[r]);
+				moveIndexes.push_back(r);
+			}
 			else
 				i--;
 		}
@@ -89,22 +100,25 @@ void Game::Start()
 		moveIndexes.clear();
 		for (int i = 0; i < 3; i++)
 		{
-			int r = rand() % get<2>(allMoves).size();
+			int r = rand() % get<2>(allMoves)->size();
 			if (moveIndexes.size() == 0 || find(moveIndexes.begin(), moveIndexes.end(), r) == moveIndexes.end())
-				character->addMove(&get<2>(allMoves)[r]);
+			{
+				character->addMove((*get<2>(allMoves))[r]);
+				moveIndexes.push_back(r);
+			}
 			else
 				i--;
 		}
 		// add the defend move
-		character->addMove(&get<3>(allMoves)[0]);
+		character->addMove((*get<3>(allMoves))[0]);
 	}
 
 	cout << "What is your name?\n";
 	cin >> in;
-	player.setName(in);
+	player->setName(in);
 	system("cls");
-	cout << "Hello " << player.getName() << "\n";
-	cin.get();
+	cout << "Hello " << player->getName() << "\n";
+	cin.ignore();
 	system("cls");
 
 	Battle();
@@ -115,7 +129,7 @@ void Game::Battle()
 	string msg;
 	for (int i = 0; i < enemies.size(); i++)
 	{
-		msg += enemies[i].getName();
+		msg += enemies[i]->getName();
 		if (i == enemies.size() - 2)
 			msg += " and ";
 		else if (i != enemies.size() - 1)
@@ -125,16 +139,30 @@ void Game::Battle()
 	cin.ignore();
 	system("cls");
 
-	vector<tuple<Move*, Character*, Character*>> moves; // stores the moves in order. (move, target, user)
 	while (true)
 	{
+		vector<tuple<Move*, Character*, Character*>*> moves; // stores the moves in order. (move, target, user)
 		// get the turn order and moves of each character in order
 		vector<Character*> turnOrder = GetTurnOrder();
 		for (Character* c : turnOrder)
 		{
+			if (c->getHP() <= 0)
+			{
+				if (c == player)
+				{
+					Lose();
+					return;
+				}
+				if (find(friends.begin(), friends.end(), c) != friends.end())
+					friends.erase(find(friends.begin(), friends.end(), c));
+				if (find(enemies.begin(), enemies.end(), c) != enemies.end())
+					enemies.erase(find(enemies.begin(), enemies.end(), c));
+				continue;
+			}
+
 			// get the moves for the character
 			tuple<Move*, Character*> move;
-			if (c == &player)
+			if (c == player)
 				move = GetPlayerMove();
 			else
 				move = GetRandomMove(c);
@@ -144,7 +172,7 @@ void Game::Battle()
 			get<0>(m) = get<0>(move);
 			get<1>(m) = get<1>(move);
 			get<2>(m) = c;
-			moves.push_back(m);
+			moves.push_back(&m);
 
 			// check the character for expired modifiers and remove them
 			for (tuple<string, int, int> mod : c->getModifiers())
@@ -154,13 +182,15 @@ void Game::Battle()
 					c->removeModifier(mod);
 			}
 		}
+		cout << "playmoves\n";
 
 		// play the moves in order
-		for (tuple<Move*, Character*, Character*> m : moves)
+		for (tuple<Move*, Character*, Character*>* m : moves)
 		{
-			Move* move = get<0>(m);
-			Character* target = get<1>(m);
-			Character* user = get<2>(m);
+			cout << "tesetettetesfahuykjbrhtxgulrfkyuqt4nhoualeioaezhycjvsllxbvhdtrhlxbgfjvb n\n";
+			Move* move = get<0>(*m);
+			Character* target = get<1>(*m);
+			Character* user = get<2>(*m);
 
 			msg = user->getName();
 			switch (move->getType())
@@ -253,10 +283,10 @@ void Game::Battle()
 
 vector<Character*> Game::GetTurnOrder()
 {
-	vector<Character*> allCharacters = GetAllCharacters();
+	vector<Character*>* allCharacters = GetAllCharacters();
 
 	// apply speed modifiers
-	for (Character* c : allCharacters)
+	for (Character* c : *allCharacters)
 	{
 		for (tuple<string, int, int> mod : c->getModifiers())
 		{
@@ -265,10 +295,10 @@ vector<Character*> Game::GetTurnOrder()
 		}
 	}
 
-	sort(allCharacters.begin(), allCharacters.end(), [](Character* a, Character* b) { return a->getSPD() > b->getSPD(); });
+	sort(allCharacters->begin(), allCharacters->end(), [](Character* a, Character* b) { return a->getSPD() > b->getSPD(); });
 
 	// remove speed modifiers
-	for (Character* c : allCharacters)
+	for (Character* c : *allCharacters)
 	{
 		for (tuple<string, int, int> mod : c->getModifiers())
 		{
@@ -277,7 +307,7 @@ vector<Character*> Game::GetTurnOrder()
 		}
 	}
 
-	return allCharacters;
+	return *allCharacters;
 }
 
 tuple<Move*, Character*> Game::GetPlayerMove()
@@ -298,7 +328,7 @@ tuple<Move*, Character*> Game::GetPlayerMove()
 			case 1:
 			case 2:
 				cout << "Your moves:\n";
-				for (Move* move : player.getMoves())
+				for (Move* move : player->getMoves())
 				{
 					Move m = *move;
 					if (m.getType() == in)
@@ -316,25 +346,12 @@ tuple<Move*, Character*> Game::GetPlayerMove()
 					system("cls");
 
 					// get the target
-					i = 1;
-					vector<Character*> targets;
+					vector<Character*>* targets = GetAllCharacters();
 					cout << "Use " << move->getName() << " on whom?\n";
-					cout << "0: " << player.getName() << "\n";
-					targets.push_back(&player);
-					for (Character f : friends)
-					{
-						cout << i + ": " << f.getName() << "\n";
-						targets.push_back(&f);
-						i++;
-					}
-					for (Character e : enemies)
-					{
-						cout << i + ": " << e.getName() << "\n";
-						targets.push_back(&e);
-						i++;
-					}
+					for (int i = 0; i < targets->size(); i++)
+						cout << to_string(i) + ": " << (*targets)[i]->getName() << "\n";
 					cin >> in;
-					target = targets[in];
+					target = (*targets)[in];
 					return make_tuple(move, target);
 				}
 				catch (const exception& e)
@@ -346,8 +363,8 @@ tuple<Move*, Character*> Game::GetPlayerMove()
 				break;
 
 			case 3:
-				move = &get<3>(allMoves)[0];
-				target = &player;
+				move = (*get<3>(allMoves))[0];
+				target = player;
 				return make_tuple(move, target);
 
 			// default try again
@@ -375,14 +392,14 @@ tuple<Move*, Character*> Game::GetRandomMove(Character* character)
 		// check if character is a friend or enemy
 		if (find(friends.begin(), friends.end(), character) != friends.end())
 		{
-			for (Character e : enemies)
-				targets.push_back(&e);
+			for (Character* e : enemies)
+				targets.push_back(e);
 		}
 		else
 		{
-			targets.push_back(&player);
-			for (Character f : friends)
-				targets.push_back(&f);
+			targets.push_back(player);
+			for (Character* f : friends)
+				targets.push_back(f);
 		}
 		// check all characters to see if the attack can kill the target
 		for (Character* t : targets)
@@ -397,14 +414,14 @@ tuple<Move*, Character*> Game::GetRandomMove(Character* character)
 		// check if character is a friend or enemy
 		if (find(friends.begin(), friends.end(), character) != friends.end())
 		{
-			targets.push_back(&player);
-			for (Character f : friends)
-				targets.push_back(&f);
+			targets.push_back(player);
+			for (Character* f : friends)
+				targets.push_back(f);
 		}
 		else
 		{
-			for (Character e : enemies)
-				targets.push_back(&e);
+			for (Character* e : enemies)
+				targets.push_back(e);
 		}
 		int r = rand() % targets.size();
 		target = targets[r];
@@ -415,14 +432,14 @@ tuple<Move*, Character*> Game::GetRandomMove(Character* character)
 		// check if character is a friend or enemy
 		if (find(friends.begin(), friends.end(), character) != friends.end())
 		{
-			for (Character e : enemies)
-				targets.push_back(&e);
+			for (Character* e : enemies)
+				targets.push_back(e);
 		}
 		else
 		{
-			targets.push_back(&player);
-			for (Character f : friends)
-				targets.push_back(&f);
+			targets.push_back(player);
+			for (Character* f : friends)
+				targets.push_back(f);
 		}
 		int r = rand() % targets.size();
 		target = targets[r];
@@ -444,15 +461,15 @@ void Game::Lose()
 	cout << "You died!\n";
 }
 
-vector<Character*> Game::GetAllCharacters()
+vector<Character*>* Game::GetAllCharacters()
 {
-	vector<Character*> allCharacters;
+	vector<Character*>* allCharacters = new vector<Character*>();
 
-	allCharacters.push_back(&player);
-	for (Character f : friends)
-		allCharacters.push_back(&f);
-	for (Character e : enemies)
-		allCharacters.push_back(&e);
+	allCharacters->push_back(player);
+	for (Character* f : friends)
+		allCharacters->push_back(f);
+	for (Character* e : enemies)
+		allCharacters->push_back(e);
 
 	return allCharacters;
 }
