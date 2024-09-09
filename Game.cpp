@@ -141,11 +141,15 @@ void Game::Battle()
 
 	while (true)
 	{
+		msg = "";
 		vector<BattleAction*> moves;
 		// get the turn order and moves of each character in order
 		vector<Character*> turnOrder = GetTurnOrder();
+
+		// show the character's hp and modifiers
 		for (Character* c : turnOrder)
 		{
+			// check if the character is dead
 			if (c->getHP() <= 0)
 			{
 				if (c == player)
@@ -160,9 +164,33 @@ void Game::Battle()
 				continue;
 			}
 
+			vector<tuple<string, int, int>*> modifiers;
+			// check the character for expired modifiers and remove them
+			for (tuple<string, int, int> mod : c->getModifiers())
+			{
+				tuple<string, int, int> newMod = make_tuple(get<0>(mod), get<1>(mod), get<2>(mod) - 1);
+				c->removeModifier(mod);
+				if (get<2>(newMod) > 0)
+					modifiers.push_back(&newMod);
+			}
+			for (tuple<string, int, int>* mod : modifiers)
+				c->addModifier(*mod);
+
+			msg += c->getName() + ": \nHP: " + to_string(c->getHP()) + "\n";
+			for (tuple<string, int, int> mod : c->getModifiers())
+				msg += get<0>(mod) + ": " + to_string(get<1>(mod)) + " for " + to_string(get<2>(mod)) + " turn(s)\n";
+			msg += "\n";
+		}
+		cout << msg;
+		cin.ignore();
+		system("cls");
+		
+		// get the moves for each character
+		for (Character* c : turnOrder)
+		{
 			BattleAction* action = new BattleAction();
 			action->setUser(c);
-			// get the moves for the character
+			// get the moves and target
 			if (c == player)
 			{
 				GetPlayerMove(action);
@@ -176,14 +204,6 @@ void Game::Battle()
 
 			// add the move to the moves list
 			moves.push_back(action);
-
-			// check the character for expired modifiers and remove them
-			for (tuple<string, int, int> mod : c->getModifiers())
-			{
-				get<2>(mod) -= 1;
-				if (get<2>(mod) <= 0)
-					c->removeModifier(mod);
-			}
 		}
 
 		// play the moves in order
@@ -206,7 +226,7 @@ void Game::Battle()
 					msg += " casts " + action->getMove()->getName() + " on " + action->getTarget()->getName();
 					break;
 				case 3: // defence
-					msg += " defends";
+					msg += " defends!";
 					break;
 			}
 			cout << msg << "\n";
@@ -285,10 +305,6 @@ void Game::Battle()
 			{
 				// add a +1000 defence modifier to the target for 0 turns, IE. make them invincible this turn
 				action->getTarget()->addModifier(make_tuple("DEF", 1000, 0));
-				msg = action->getTarget()->getName() + " defends!\n";
-				cout << msg << "\n";
-				cin.ignore();
-				system("cls");
 				continue;
 			}
 		}
