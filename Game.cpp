@@ -233,7 +233,6 @@ void Game::Battle()
 			{
 				cout << move->getName() << " missed!\n";
 				cin.ignore();
-				system("cls");
 				continue;
 			}
 			// apply damage
@@ -261,7 +260,6 @@ void Game::Battle()
 				msg = action->getTarget()->getName() + " takes " + to_string(damage) + " damage!";
 				cout << msg << "\n";
 				cin.ignore();
-				system("cls");
 				continue;
 			}
 			// check if the move is a heal
@@ -272,7 +270,6 @@ void Game::Battle()
 				action->getTarget()->setHP(action->getTarget()->getHP() + damage);
 				cout << msg << "\n";
 				cin.ignore();
-				system("cls");
 				continue;
 			}
 			// check if the move is of type 1 (special)
@@ -298,7 +295,6 @@ void Game::Battle()
 				action->getTarget()->addModifier(m);
 				cout << msg << "\n";
 				cin.ignore();
-				system("cls");
 				continue;
 			}
 			// check if the move is of type 3 (defence)
@@ -313,6 +309,7 @@ void Game::Battle()
 				continue;
 			}
 		}
+		system("cls");
 	}
 }
 
