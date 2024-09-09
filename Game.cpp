@@ -141,7 +141,7 @@ void Game::Battle()
 
 	while (true)
 	{
-		vector<tuple<Move*, Character*, Character*>*> moves; // stores the moves in order. (move, target, user)
+		vector<BattleAction*> moves;
 		// get the turn order and moves of each character in order
 		vector<Character*> turnOrder = GetTurnOrder();
 		for (Character* c : turnOrder)
@@ -160,19 +160,22 @@ void Game::Battle()
 				continue;
 			}
 
+			BattleAction* action = new BattleAction();
+			action->setUser(c);
 			// get the moves for the character
-			tuple<Move*, Character*> move;
 			if (c == player)
-				move = GetPlayerMove();
+			{
+				GetPlayerMove(action);
+				GetPlayerTarget(action);
+			}
 			else
-				move = GetRandomMove(c);
+			{
+				GetRandomMove(action);
+				GetRandomTarget(action);
+			}
 
 			// add the move to the moves list
-			tuple<Move*, Character*, Character*> m;
-			get<0>(m) = get<0>(move);
-			get<1>(m) = get<1>(move);
-			get<2>(m) = c;
-			moves.push_back(&m);
+			moves.push_back(action);
 
 			// check the character for expired modifiers and remove them
 			for (tuple<string, int, int> mod : c->getModifiers())
@@ -182,27 +185,25 @@ void Game::Battle()
 					c->removeModifier(mod);
 			}
 		}
-		cout << "playmoves\n";
 
 		// play the moves in order
-		for (tuple<Move*, Character*, Character*>* m : moves)
+		for (BattleAction* action : moves)
 		{
-			cout << "tesetettetesfahuykjbrhtxgulrfkyuqt4nhoualeioaezhycjvsllxbvhdtrhlxbgfjvb n\n";
-			Move* move = get<0>(*m);
-			Character* target = get<1>(*m);
-			Character* user = get<2>(*m);
+			Move* move = action->getMove();
+			Character* target = action->getTarget();
+			Character* user = action->getUser();
 
-			msg = user->getName();
+			msg = action->getUser()->getName();
 			switch (move->getType())
 			{
 				case 0: // attack
-					msg += " attacks " + target->getName() + " with " + move->getName();
+					msg += " attacks " + action->getTarget()->getName() + " with " + action->getMove()->getName();
 					break;
 				case 1: // special
-					msg += " uses " + move->getName() + " on " + target->getName();
+					msg += " uses " + action->getMove()->getName() + " on " + action->getTarget()->getName();
 					break;
 				case 2: // magic
-					msg += " casts " + move->getName() + " on " + target->getName();
+					msg += " casts " + action->getMove()->getName() + " on " + action->getTarget()->getName();
 					break;
 				case 3: // defence
 					msg += " defends";
@@ -215,20 +216,22 @@ void Game::Battle()
 			if (move->getACC() < hit)
 			{
 				cout << move->getName() << " missed!\n";
+				cin.ignore();
+				system("cls");
 				continue;
 			}
 			// apply damage
 			// check if the move is a damaging move
-			if (move->Damaging())
+			if (action->getMove()->Damaging())
 			{
-				int damage = user->getATK() + move->getPOW();
-				for (tuple<string, int, int> mod : user->getModifiers())
+				int damage = action->getUser()->getATK() + action->getMove()->getPOW();
+				for (tuple<string, int, int> mod : action->getUser()->getModifiers())
 				{
 					if (get<0>(mod) == "ATK")
 						damage += get<1>(mod);
 				}
 				int def = target->getDEF();
-				for (tuple<string, int, int> mod : target->getModifiers())
+				for (tuple<string, int, int> mod : action->getTarget()->getModifiers())
 				{
 					if (get<0>(mod) == "DEF")
 						def += get<1>(mod);
@@ -238,43 +241,54 @@ void Game::Battle()
 				else
 					damage -= def;
 
-				target->setHP(target->getHP() - damage);
-				msg = target->getName() + " takes " + to_string(damage) + " damage!";
+				action->getTarget()->setHP(action->getTarget()->getHP() - damage);
+				msg = action->getTarget()->getName() + " takes " + to_string(damage) + " damage!";
+				cout << msg << "\n";
+				cin.ignore();
+				system("cls");
 				continue;
 			}
 			// check if the move is a heal
-			if (move->getName().find("Heal") != string::npos)
+			if (action->getMove()->getName().find("Heal") != string::npos)
 			{
 				int damage = move->getPOW();
-				msg = target->getName() + " heals " + to_string(damage) + " damage!";
-				target->setHP(target->getHP() + damage);
+				msg = action->getTarget()->getName() + " heals " + to_string(damage) + " damage!";
+				action->getTarget()->setHP(action->getTarget()->getHP() + damage);
+				cout << msg << "\n";
+				cin.ignore();
+				system("cls");
 				continue;
 			}
 			// check if the move is of type 1 (special)
-			if (move->getType() == 1)
+			if (action->getMove()->getType() == 1)
 			{
-				int mod = move->getPOW();
+				int mod = action->getMove()->getPOW();
 				string moveName;
-				if (move->getName().find(" up") != string::npos)
+				if (action->getMove()->getName().find(" up") != string::npos)
 				{
-					moveName = move->getName().substr(0, move->getName().find(" up"));
-					msg = target->getName() + "s " + moveName + " rose by " + to_string(mod) + "!";
+					moveName = action->getMove()->getName().substr(0, action->getMove()->getName().find(" up"));
+					msg = action->getTarget()->getName() + "s " + moveName + " rose by " + to_string(mod) + "!";
 				}
 				else
 				{
-					moveName = move->getName().substr(0, move->getName().find(" down"));
-					msg = target->getName() + "s " + moveName + " lowered by " + to_string(mod) + "!";
+					moveName = action->getMove()->getName().substr(0, action->getMove()->getName().find(" down"));
+					msg = action->getTarget()->getName() + "s " + moveName + " lowered by " + to_string(mod) + "!";
 				}
-				target->addModifier(make_tuple(moveName, mod, 3));
+				action->getTarget()->addModifier(make_tuple(moveName, mod, 3));
 				cout << msg << "\n";
+				cin.ignore();
+				system("cls");
 				continue;
 			}
 			// check if the move is of type 3 (defence)
-			if (move->getType() == 3)
+			if (action->getMove()->getType() == 3)
 			{
 				// add a +1000 defence modifier to the target for 0 turns, IE. make them invincible this turn
-				target->addModifier(make_tuple("DEF", 1000, 0));
-				msg = target->getName() + " defends!\n";
+				action->getTarget()->addModifier(make_tuple("DEF", 1000, 0));
+				msg = action->getTarget()->getName() + " defends!\n";
+				cout << msg << "\n";
+				cin.ignore();
+				system("cls");
 				continue;
 			}
 		}
@@ -310,13 +324,12 @@ vector<Character*> Game::GetTurnOrder()
 	return *allCharacters;
 }
 
-tuple<Move*, Character*> Game::GetPlayerMove()
+void Game::GetPlayerMove(BattleAction* action)
 {
 	int in;
 	int i = 0;
 	vector<Move*> playerMoves;
 	Move* move = nullptr;
-	Character* target = nullptr;
 	while (true)
 	{
 		cout << "Your turn!\n0: Attack\n1: Special\n2: Magic\n3: Defend\n";
@@ -344,15 +357,8 @@ tuple<Move*, Character*> Game::GetPlayerMove()
 				{
 					move = playerMoves[in];
 					system("cls");
-
-					// get the target
-					vector<Character*>* targets = GetAllCharacters();
-					cout << "Use " << move->getName() << " on whom?\n";
-					for (int i = 0; i < targets->size(); i++)
-						cout << to_string(i) + ": " << (*targets)[i]->getName() << "\n";
-					cin >> in;
-					target = (*targets)[in];
-					return make_tuple(move, target);
+					action->setMove(move);
+					return;
 				}
 				catch (const exception& e)
 				{
@@ -364,8 +370,9 @@ tuple<Move*, Character*> Game::GetPlayerMove()
 
 			case 3:
 				move = (*get<3>(allMoves))[0];
-				target = player;
-				return make_tuple(move, target);
+				action->setMove(move);
+				action->setTarget(player);
+				return;
 
 			// default try again
 			default:
@@ -377,20 +384,39 @@ tuple<Move*, Character*> Game::GetPlayerMove()
 	}
 }
 
-tuple<Move*, Character*> Game::GetRandomMove(Character* character)
+void Game::GetRandomMove(BattleAction* action)
 {
 	// get a random move
-	int in = rand() % character->getMoves().size();
-	Move* move = character->getMoves()[in];
-	Character* target;
+	int in = rand() % action->getUser()->getMoves().size();
+	Move* move = action->getUser()->getMoves()[in];
+	action->setMove(move);
+}
+
+void Game::GetPlayerTarget(BattleAction* action)
+{
+	int in;
+	Character* target = nullptr;
+	vector<Character*>* targets = GetAllCharacters();
+	cout << "Use " << action->getMove()->getName() << " on whom?\n";
+	for (int i = 0; i < targets->size(); i++)
+		cout << to_string(i) + ": " << (*targets)[i]->getName() << "\n";
+	cin >> in;
+	target = (*targets)[in];
+
+	action->setTarget(target);
+}
+
+void Game::GetRandomTarget(BattleAction* action)
+{
+	Character* target = nullptr;
 
 	vector<Character*> targets;
-	if (move->Damaging())
+	if (action->getMove()->Damaging())
 	{
 		int damage;
-		damage = character->getATK() + move->getPOW();
+		damage = action->getUser()->getATK() + action->getMove()->getPOW();
 		// check if character is a friend or enemy
-		if (find(friends.begin(), friends.end(), character) != friends.end())
+		if (find(friends.begin(), friends.end(), action->getUser()) != friends.end())
 		{
 			for (Character* e : enemies)
 				targets.push_back(e);
@@ -407,12 +433,14 @@ tuple<Move*, Character*> Game::GetRandomMove(Character* character)
 			if (t->getHP() - damage <= 0)
 				target = t;
 		}
+		if (target == nullptr)
+			target = targets[rand() % targets.size()];
 	}
 	// check if the move is a heal or a special buff
-	else if (move->getName().find("Heal") != string::npos && (move->getType() == 1 && move->getName().find(" up") != string::npos))
+	else if (action->getMove()->getName().find("Heal") != string::npos || (action->getMove()->getType() == 1 && action->getMove()->getName().find(" up") != string::npos))
 	{
 		// check if character is a friend or enemy
-		if (find(friends.begin(), friends.end(), character) != friends.end())
+		if (find(friends.begin(), friends.end(), action->getUser()) != friends.end())
 		{
 			targets.push_back(player);
 			for (Character* f : friends)
@@ -427,10 +455,10 @@ tuple<Move*, Character*> Game::GetRandomMove(Character* character)
 		target = targets[r];
 	}
 	// check if the move is a special debuff
-	else if (move->getType() == 1 && move->getName().find(" down") != string::npos)
+	else if (action->getMove()->getType() == 1 && action->getMove()->getName().find(" down") != string::npos)
 	{
 		// check if character is a friend or enemy
-		if (find(friends.begin(), friends.end(), character) != friends.end())
+		if (find(friends.begin(), friends.end(), action->getUser()) != friends.end())
 		{
 			for (Character* e : enemies)
 				targets.push_back(e);
@@ -445,10 +473,19 @@ tuple<Move*, Character*> Game::GetRandomMove(Character* character)
 		target = targets[r];
 	}
 	// check if the move is of type 3 (defence)
-	else if (move->getType() == 3)
-		target = character;
+	else if (action->getMove()->getType() == 3)
+		target = action->getUser();
 
-	return make_tuple(move, target);
+	if (target == nullptr)
+	{
+		cout << "Target remained null for some reason.\nMove: " << action->getMove()->getName() << "\ndamaging: " << action->getMove()->Damaging() << "\nType: " << action->getMove()->getType() << "\n";
+		cin.ignore();
+		cin.ignore();
+		cin.ignore();
+		cin.ignore();
+	}
+	
+	action->setTarget(target);
 }
 
 void Game::Win()

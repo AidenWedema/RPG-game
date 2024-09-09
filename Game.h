@@ -18,8 +18,10 @@ public:
 	void Start();
 	void Battle();
 	vector<Character*> GetTurnOrder();
-	tuple<Move*, Character*> GetPlayerMove();
-	tuple<Move*, Character*> GetRandomMove(Character* character);
+	void GetPlayerMove(BattleAction* action);
+	void GetRandomMove(BattleAction* action);
+	void GetPlayerTarget(BattleAction* action);
+	void GetRandomTarget(BattleAction* action);
 	void Win();
 	void Lose();
 	vector<Character*>* GetAllCharacters();
