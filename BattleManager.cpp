@@ -66,15 +66,6 @@ void BattleManager::Setup(Character* player, vector<Character*> friends, vector<
 
 void BattleManager::Start()
 {
-	srand(time(0));
-	cout << "Are you ready for adventure?\n";
-	string in;
-	cin >> in;
-	if (in != "y" && in != "yes")
-	{
-		cout << "Goodbye";
-		return;
-	}
 	system("cls");
 
 	// assign moves to each character
@@ -123,15 +114,6 @@ void BattleManager::Start()
 		// add the defend move
 		character->addMove((*get<3>(allMoves))[0]);
 	}
-	cin.ignore();
-	cout << "What is your name?\n";
-	char name[100];
-	cin.getline(name, 100);
-	player->setName(name);
-	system("cls");
-	cout << "Hello " << player->getName() << "\n";
-	cin.ignore();
-	system("cls");
 
 	Battle();
 }

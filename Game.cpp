@@ -44,10 +44,43 @@ void Game::GameLoop()
 	{
 		// move to new area
 		vector<string>* options = new vector<string>{"Go north", "Go east", "Go south", "Go west"};
-		if (currentArea->getType() == 6 || currentArea->getType() == 7)
+		if (currentArea->getType() == 6)
 			options->push_back("Rest at an inn");
-
-		int in = GetPlayerInput("Where would you like to go?", options);
+		if (currentArea->getType() == 7)
+		{
+			options->push_back("Rest at an inn");
+			options->push_back("Go to the tavern");
+		}
+		string msg = "You are ";
+		switch (currentArea->getType())
+		{
+			case 0:
+				msg += "in the ocean.\n";
+				break;
+			case 1:
+				msg += "on the beach.\n";
+				break;
+			case 2:
+				msg += "in the plains.\n";
+				break;
+			case 3:
+				msg += "in a forrest.\n";
+				break;
+			case 4:
+				msg += "in a desert.\n";
+				break;
+			case 5:
+				msg += "on a mountain.\n";
+				break;
+			case 6:
+				msg += "in a city.\n";
+				break;
+			case 7:
+				msg += "in a town.\n";
+				break;
+		}
+		msg += "Where would you like to go?";
+		int in = GetPlayerInput(msg, options);
 		tuple<int, int> coords = currentArea->getCoordinates();
 		switch (in)
 		{
@@ -112,7 +145,7 @@ void Game::GenerateWorld()
 			area->setEncounterChance(rand() % 100);
 			world[make_tuple(x, y)] = area;
 			if (type == 6 || type == 7)
-				return;
+				continue;
 			vector<Character*> enemies = vector<Character*>{
 				new Character("Slime", 10, 1, 0, 0), 
 				new Character("Goblin", 30, 5, 1, 2),
