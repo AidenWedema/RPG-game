@@ -1,8 +1,11 @@
 #include <iostream>
+#include "BattleManager.h"
 #include "Game.h"
 
 int main()
 {
-	Game game = Game();
+	//BattleManager game = BattleManager();
+	//game.Start();
+	Game game;
 	game.Start();
 }

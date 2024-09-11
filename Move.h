@@ -22,7 +22,6 @@ public:
 	void setDamaging(bool doesDamage);
 
 private:
-
 	string name;
 	int pow;
 	int acc;
