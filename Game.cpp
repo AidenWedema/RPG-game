@@ -3,7 +3,7 @@
 Game::Game()
 {
 	srand(time(0));
-	player = new Character("PLAYER", 100, 10, 0, 0);
+	player = new Character("PLAYER", 100, 10, 0, 2);
 	friends = vector<Character*>();
 	battleManager = new BattleManager();
 	GenerateWorld();
@@ -142,7 +142,6 @@ void Game::GenerateWorld()
 			if (type != 0 && rand() % 4 == 0)
 				type = rand() % 4 ==  0 ? 6 : 7;
 			area->setType(type);
-			area->setEncounterChance(rand() % 100);
 			world[make_tuple(x, y)] = area;
 			if (type == 6 || type == 7)
 				continue;
@@ -162,26 +161,32 @@ void Game::GenerateWorld()
 				// ocean
 				case 0:
 					area->setEnemies(vector<Character*>{ enemies[7], enemies[8]});
+					area->setEncounterChance(20);
 					break;
 				// beach
 				case 1:
 					area->setEnemies(vector<Character*>{ enemies[7], enemies[0]});
+					area->setEncounterChance(15);
 					break;
 				// plains
 				case 2:
 					area->setEnemies(vector<Character*>{ enemies[0], enemies[1], enemies[2]});
+					area->setEncounterChance(30);
 					break;
 				// forrest
 				case 3:
 					area->setEnemies(vector<Character*>{ enemies[0], enemies[1], enemies[5]});
+					area->setEncounterChance(40);
 					break;
 				// desert
 				case 4:
 					area->setEnemies(vector<Character*>{ enemies[2], enemies[3], enemies[4], enemies[5]});
+					area->setEncounterChance(20);
 					break;
 				// mountain
 				case 5:
 					area->setEnemies(vector<Character*>{ enemies[2], enemies[3], enemies[5], enemies[6]});
+					area->setEncounterChance(20);
 					break;
 			}
 		}

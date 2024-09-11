@@ -57,7 +57,9 @@ void BattleManager::Setup(Character* player, vector<Character*> friends, vector<
 {
 	this->player = player;
 	this->friends = friends;
-	for (int i = 0; i < rand() % 3 + 1; i++)
+	this->enemies.clear();
+	int amount = rand() % 3 + 1;
+	for (int i = 0; i < amount; i++)
 		this->enemies.push_back(enemies[rand() % enemies.size()]);
 
 	for (int i = 0; i < enemies.size(); i++)
@@ -370,10 +372,17 @@ void BattleManager::GetPlayerMove(BattleAction* action)
 						i++;
 					}
 				}
-				cout << "\nWhat is your move?\n";
+				cout << i << ": " << "back\n" << "\nWhat is your move?\n";
 				cin >> in;
 				try
 				{
+					if (in == i)
+					{
+						cin.ignore();
+						system("cls");
+						break;
+					}
+
 					move = playerMoves[in];
 					system("cls");
 					action->setMove(move);
@@ -514,7 +523,11 @@ void BattleManager::Win()
 
 void BattleManager::Lose()
 {
-	cout << "You died!\n";
+	cout << "You blacked out!\n";
+	player->setHP(1);
+	player->setModifiers({});
+	cin.ignore();
+	system("cls");
 }
 
 vector<Character*>* BattleManager::GetAllCharacters()
