@@ -143,6 +143,7 @@ void BattleManager::Battle()
 		vector<Character*> turnOrder = GetTurnOrder();
 
 		// show the character's hp and modifiers
+		vector<Character*> dead;
 		for (Character* c : turnOrder)
 		{
 			// check if the character is dead
@@ -164,6 +165,7 @@ void BattleManager::Battle()
 						return;
 					}
 				}
+				dead.push_back(c);
 				continue;
 			}
 
@@ -180,6 +182,9 @@ void BattleManager::Battle()
 				msg += get<0>(*mod) + ": " + to_string(get<1>(*mod)) + " for " + to_string(get<2>(*mod)) + " turn(s)\n";
 			msg += "\n";
 		}
+		for (Character* c : dead)
+			turnOrder.erase(find(turnOrder.begin(), turnOrder.end(), c));
+
 		cout << msg;
 		cin.ignore();
 		system("cls");
@@ -211,6 +216,10 @@ void BattleManager::Battle()
 			Move* move = action->getMove();
 			Character* target = action->getTarget();
 			Character* user = action->getUser();
+
+			// check if the uesr is dead
+			if (user->getHP() <= 0)
+				continue;
 
 			msg = action->getUser()->getName();
 			switch (move->getType())

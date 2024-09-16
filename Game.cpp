@@ -95,7 +95,6 @@ void Game::LocalPlay()
 		}
 	}
 	multiplayer = true;
-	Sleep(1000);
 }
 
 void Game::GameLoop()
