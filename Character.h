@@ -36,6 +36,10 @@ public:
 
 	int getID();
 	void setID(int ID);
+	bool getIsCPU();
+	void setIsCPU(bool isCPU);
+	tuple<int, int> getCoordinates();
+	void setCoordinates(tuple<int, int> coordinates);
 	bool operator==(const Character* other) const {
 		return this->ID == other->ID;
 	}
@@ -49,4 +53,6 @@ private:
 	vector<Move*> moves;
 	vector<tuple<string, int, int>*> modifiers; // (modified stat, value change for stat, amount of turns left)
 	int ID;
+	bool isCPU = true;
+	tuple<int, int> coordinates;
 };

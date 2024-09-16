@@ -10,14 +10,13 @@
 #include "Move.h"
 #include "BattleManager.h"
 #include "Area.h"
-#include "Server.h"
-#include "Client.h"
+class Server;
+class Client;
 
 class Game
 {
 public:
-	Game();
-	~Game();
+	static Game* GetInstance();
 
 	void Start();
 	void LocalPlay();
@@ -26,6 +25,13 @@ public:
 	void StartBattle();
 	void GenerateWorld();
 	int GetPlayerInput(string pretext, vector<string>* options);
+	void AddPlayer(Character* character);
+	void RemovePlayer(Character* character);
+	vector<Character*> GetPlayers();
+	void SetPlayers(vector<Character*> newPlayers);
+	int GetSeed();
+	void SetSeed(int seed);
+	string GetPlayerName();
 
 	// Hash function for tuple<int, int> to use in unordered_map
 	struct tuple_hash {
@@ -37,11 +43,19 @@ public:
 		}
 	};
 
-private:
+private:	
+	Game();
+	~Game();
+	static Game* instance;
 	Character* player;
 	vector<Character*> friends;
+	vector<Character*> players;
 	unordered_map<tuple<int, int>, Area*, tuple_hash> world;
 	Area* currentArea;
 	BattleManager* battleManager;
+	int randomSeed;
+	Server* server;
+	Client* client;
+	bool multiplayer;
 };
 

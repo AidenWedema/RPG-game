@@ -1,9 +1,8 @@
 #include <iostream>
-#include "BattleManager.h"
 #include "Game.h"
 
 int main()
 {
-	Game game;
-	game.Start();
+	Game* game = Game::GetInstance();
+	game->Start();
 }

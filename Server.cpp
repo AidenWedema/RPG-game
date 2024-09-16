@@ -20,21 +20,21 @@ void Server::handleClient(SOCKET clientSocket) {
         bytesReceived = recv(clientSocket, buffer, 1024, 0);
         if (bytesReceived > 0) {
             buffer[bytesReceived] = '\0'; // Null-terminate the received data
-            std::cout << "Received message: " << buffer << std::endl;
 
             // Respond to client
             std::string response = std::string(buffer);
-            //std::cout << "Enter response: ";
-            //std::getline(std::cin, response);
-
-            // Send the message to all connected clients
-            for (auto& socket : clientSockets)
-                send(socket, response.c_str(), response.size(), 0);
 
             if (response == "/quit") {
                 running = false;
                 clientSockets.erase(std::remove(clientSockets.begin(), clientSockets.end(), clientSocket), clientSockets.end());
                 break;
+            }
+
+            if (ParseCommand(response, clientSocket))
+            {
+                // Send the message to all connected clients
+                for (auto& socket : clientSockets)
+                    send(socket, response.c_str(), response.size(), 0);
             }
         }
         else {
@@ -45,6 +45,55 @@ void Server::handleClient(SOCKET clientSocket) {
 
     closesocket(clientSocket);
 }
+
+void Server::Listen()
+{
+    SOCKET clientSocket;
+    sockaddr_in clientAddr;
+    int addrLen = sizeof(clientAddr);
+
+    while (true)
+    {
+        // Accept a client connection
+        clientSocket = accept(serverSocket, (sockaddr*)&clientAddr, &addrLen);
+        if (clientSocket == INVALID_SOCKET) {
+            std::cerr << "Client connection failed!" << std::endl;
+            continue;
+        }
+        clientSockets.push_back(clientSocket);
+
+        char buffer[1024];
+        string name = "Client";
+        // Receive message from client
+        int bytesReceived = recv(clientSocket, buffer, 1024, 0);
+        if (bytesReceived > 0) {
+            buffer[bytesReceived] = '\0'; // Null-terminate the received data
+			name = std::string(buffer);
+            name = name.substr(0, name.find("\n"));
+            string rest = std::string(buffer).substr(name.length() + 1);
+            while (!rest.empty())
+            {
+                string c = rest.substr(0, rest.find("\n"));
+                rest = rest.substr(rest.find("\n") + 1);
+                ParseCommand(c, clientSocket);
+            }
+            Game::GetInstance()->AddPlayer(new Character(name, 0, 0, 0, 0));
+        }
+
+        std::cout << name + " connected!" << std::endl;
+
+        // Handle client communication
+        std::thread clientThread(&Server::handleClient, this, clientSocket);
+        clientThread.detach();
+    }
+
+    // Close server socket
+    closesocket(serverSocket);
+
+    // Cleanup
+    WSACleanup();
+}
+
 
 bool Server::Init()
 {
@@ -74,35 +123,54 @@ bool Server::Init()
 
 void Server::Run()
 {
-    SOCKET clientSocket;
-    sockaddr_in clientAddr;
-    int addrLen = sizeof(clientAddr);
-    char buffer[1024];
+    std::thread listenThread(&Server::Listen, this);
+	listenThread.detach();
+}
 
-    while (true)
+void Server::Send(string message, SOCKET clientSocket)
+{
+    send(clientSocket, message.c_str(), message.size(), 0);
+}
+
+bool Server::ParseCommand(string c, SOCKET clientSocket)
+{
+    // split c into multiple commands using "\n" as a delimiter, to prevent multiple commands from merging into one becase of network lag
+    vector<string> commands;
+    while (!c.empty())
     {
-        // Accept a client connection
-        clientSocket = accept(serverSocket, (sockaddr*)&clientAddr, &addrLen);
-        if (clientSocket == INVALID_SOCKET) {
-            std::cerr << "Client connection failed!" << std::endl;
-            closesocket(serverSocket);
-            WSACleanup();
-            return;
-        }
-        clientSockets.push_back(clientSocket);
-        std::string response = "Client connected!";
-        send(clientSocket, response.c_str(), response.size(), 0);
-
-        std::cout << "Client connected!" << std::endl;
-
-        // Handle client communication
-        std::thread clientThread(&Server::handleClient, this, clientSocket);
-        clientThread.detach();
+        commands.push_back(c.substr(0, c.find("\n")));
+        c = c.substr(c.find("\n") + 1);
     }
 
-    // Close server socket
-    closesocket(serverSocket);
+    for (int i = 0; i < commands.size(); i++)
+	{
+        // splite the command into the command and the arguments, using "~" as a delimiter
+        string command = commands[i].substr(0, commands[i].find("~"));
+        vector<string> args;
+        commands[i] = commands[i].substr(commands[i].find("~") + 1);
+        while (!commands[i].empty())
+        {
+            args.push_back(commands[i].substr(0, commands[i].find("~")));
+            commands[i] = commands[i].substr(commands[i].find("~") + 1);
+        }
 
-    // Cleanup
-    WSACleanup();
+        if (command == "GetPlayers")
+        {
+            vector<Character*> players = Game::GetInstance()->GetPlayers();
+            string message = "GetPlayers~";
+            for (int i = 0; i < players.size(); i++)
+            {
+                message += players[i]->getName() + "," + to_string(get<0>(players[i]->getCoordinates())) + "," + to_string(get<1>(players[i]->getCoordinates())) + "~";
+            }
+            send(clientSocket, message.c_str(), message.size(), 0);
+            return false;
+        }
+        else if (command == "GetRandomSeed")
+        {
+            int seed = Game::GetInstance()->GetSeed();
+            string message = "GetRandomSeed~" + to_string(seed);
+            send(clientSocket, message.c_str(), message.size(), 0);
+            return false;
+        }
+	}
 }

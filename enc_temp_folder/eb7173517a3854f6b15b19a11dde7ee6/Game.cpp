@@ -148,7 +148,6 @@ void Game::GameLoop()
 
 		msg += "Where would you like to go?";
 		int in = GetPlayerInput(msg, options);
-		system("cls");
 		tuple<int, int> coords = currentArea->getCoordinates();
 		switch (in)
 		{

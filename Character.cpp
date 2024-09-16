@@ -11,6 +11,8 @@ Character::Character()
 	this->def = 0;
 	this->spd = 0;
 	this->ID = 0;
+	this->isCPU = true;
+	this->coordinates = make_tuple(0, 0);
 }
 
 Character::Character(string name, int hp, int atk, int def, int spd)
@@ -21,6 +23,8 @@ Character::Character(string name, int hp, int atk, int def, int spd)
 	this->def = def;
 	this->spd = spd;
 	this->ID = 0;
+	this->isCPU = true;
+	this->coordinates = make_tuple(0, 0);
 }
 
 Character::Character(string name, int hp, int atk, int def, int spd, vector<Move*>* moves)
@@ -32,6 +36,8 @@ Character::Character(string name, int hp, int atk, int def, int spd, vector<Move
 	this->spd = spd;
 	this->moves = *moves;
 	this->ID = 0;
+	this->isCPU = true;
+	this->coordinates = make_tuple(0, 0);
 }
 
 Character::~Character()
@@ -131,4 +137,24 @@ int Character::getID()
 void Character::setID(int ID)
 {
 	this->ID = ID;
+}
+
+bool Character::getIsCPU()
+{
+	return isCPU;
+}
+
+void Character::setIsCPU(bool isCPU)
+{
+	this->isCPU = isCPU;
+}
+
+tuple<int, int> Character::getCoordinates()
+{
+	return coordinates;
+}
+
+void Character::setCoordinates(tuple<int, int> coordinates)
+{
+	this->coordinates = coordinates;
 }

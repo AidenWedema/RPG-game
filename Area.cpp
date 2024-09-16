@@ -30,7 +30,7 @@ vector<Character*> Area::getEnemies()
 
 int Area::getEncounterChance()
 {
-	return 0;
+	return encounterChance;
 }
 
 int Area::getType()
@@ -50,6 +50,7 @@ void Area::setEnemies(vector<Character*> enemies)
 
 void Area::setEncounterChance(int encounterChance)
 {
+	this->encounterChance = encounterChance;
 }
 
 void Area::setType(int type)

@@ -38,37 +38,22 @@ bool Client::Init()
 
 void Client::Run()
 {
-    // Connect to the server
-    if (connect(clientSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
-        std::cerr << "Connection failed!" << std::endl;
-        closesocket(clientSocket);
-        WSACleanup();
-        return;
+    while (true) {
+        // Connect to the server
+        if (connect(clientSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
+            std::cerr << "Connection failed!" << std::endl;
+            closesocket(clientSocket);
+            WSACleanup();
+            continue;
+        }
+        break;
     }
-
     std::cout << "Connected to server!" << std::endl;
+    Send(Game::GetInstance()->GetPlayerName());
+    Send("GetRandomSeed");
 
     std::thread listenThread(&Client::Listen, this);
-	listenThread.detach();
-    // Communication loop
-    while (true) {
-        // Send message to server
-        char in[1024];
-        std::cout << "Enter message: ";
-        std::cin.getline(in, 1024);
-        std::string message = std::string(in);
-        send(clientSocket, message.c_str(), message.size(), 0);
-
-        if (message == "/quit") {
-            break;
-        }
-    }
-
-    // Close the socket
-    closesocket(clientSocket);
-
-    // Cleanup
-    WSACleanup();
+    listenThread.detach();
 }
 
 void Client::Listen()
@@ -79,11 +64,54 @@ void Client::Listen()
         int bytesReceived = recv(clientSocket, buffer, 1024, 0);
         if (bytesReceived > 0) {
             buffer[bytesReceived] = '\0';
-            std::cout << "Server says: " << buffer << std::endl;
+            ParseCommand(std::string(buffer));
         }
         else {
             std::cerr << "Connection closed by server!" << std::endl;
             break;
         }
+    }
+}
+
+void Client::Send(string message)
+{
+    // Send message to server
+    message += "\n";
+    send(clientSocket, message.c_str(), message.size(), 0);
+}
+
+void Client::ParseCommand(string c)
+{
+    // splite the command into the command and the arguments, using "~" as a delimiter
+    string command = c.substr(0, c.find("~"));
+    vector<string> args;
+    c = c.substr(c.find("~") + 1);
+    while (!c.empty())
+    {
+        args.push_back(c.substr(0, c.find("~")));
+        c = c.substr(c.find("~") + 1);
+    }
+
+    Game* game = Game::GetInstance();
+    if (command == "GetPlayers")
+	{
+        game->SetPlayers({});
+        for (int i = 0; i < args.size(); i++)
+		{
+            string arg = args[i];
+            vector<string> playerData;
+            while (!arg.empty())
+            {
+                playerData.push_back(arg.substr(0, arg.find("~")));
+                arg = arg.substr(arg.find("~") + 1);
+            }
+            Character* player = new Character(playerData[0], 0, 0, 0, 0);
+            player->setCoordinates(make_tuple(stoi(playerData[1]), stoi(playerData[2])));
+            game->AddPlayer(player);
+		}
+	}
+    else if (command == "GetRandomSeed")
+    {
+        game->SetSeed(stoi(args[0]));
     }
 }
