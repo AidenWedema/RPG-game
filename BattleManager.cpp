@@ -422,6 +422,12 @@ void BattleManager::GetRandomMove(BattleAction* action)
 
 void BattleManager::GetPlayerTarget(BattleAction* action)
 {
+	// Check if the player used defend
+	if (action->getMove()->getType() == 3)
+	{
+		action->setTarget(player);
+		return;
+	}
 	int in;
 	Character* target = nullptr;
 	vector<Character*>* targets = GetAllCharacters();
@@ -507,9 +513,6 @@ void BattleManager::GetRandomTarget(BattleAction* action)
 	if (target == nullptr)
 	{
 		cout << "Target remained null for some reason.\nMove: " << action->getMove()->getName() << "\ndamaging: " << action->getMove()->Damaging() << "\nType: " << action->getMove()->getType() << "\n";
-		cin.ignore();
-		cin.ignore();
-		cin.ignore();
 		cin.ignore();
 	}
 	

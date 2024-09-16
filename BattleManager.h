@@ -27,7 +27,7 @@ public:
 	void Lose();
 	vector<Character*>* GetAllCharacters();
 
-private:
+protected:
 	Character* player;
 	vector<Character*> friends;
 	vector<Character*> enemies;

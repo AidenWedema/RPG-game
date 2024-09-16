@@ -4,8 +4,6 @@
 
 int main()
 {
-	//BattleManager game = BattleManager();
-	//game.Start();
 	Game game;
 	game.Start();
 }

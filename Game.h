@@ -10,6 +10,8 @@
 #include "Move.h"
 #include "BattleManager.h"
 #include "Area.h"
+#include "Server.h"
+#include "Client.h"
 
 class Game
 {
@@ -18,6 +20,7 @@ public:
 	~Game();
 
 	void Start();
+	void LocalPlay();
 	void GameLoop();
 	void MoveTo(tuple<int, int> coordinates);
 	void StartBattle();

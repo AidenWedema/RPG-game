@@ -4,7 +4,7 @@ Game::Game()
 {
 	srand(time(0));
 	player = new Character("PLAYER", 100, 10, 0, 2);
-	friends = vector<Character*>();
+	friends = vector<Character*>{ new Character("Jimmy", 100, 10, 0, 2) };
 	battleManager = new BattleManager();
 	GenerateWorld();
 	currentArea = world[make_tuple(rand() % 100, rand() % 100)];
@@ -16,10 +16,19 @@ Game::~Game()
 
 void Game::Start()
 {
-	cout << "Are you ready for adventure?\n";
 	char in[100];
+	cout << "Do you want to play solo or with friends? (s/f)\n";
 	cin.getline(in, 100);
 	string inStr = in;
+	if (inStr == "f" || inStr == "friends")
+	{
+		LocalPlay();
+		return;
+	}
+
+	cout << "Are you ready for adventure?\n";
+	cin.getline(in, 100);
+	inStr = in;
 	if (inStr != "y" && inStr != "yes")
 	{
 		cout << "Goodbye";
@@ -36,6 +45,32 @@ void Game::Start()
 	system("cls");
 
 	GameLoop();
+}
+
+void Game::LocalPlay()
+{
+	char in[100];
+	cout << "Do you want to start as a (s)erver or (c)lient? ";
+	cin.getline(in, 100);
+	string choice = in;
+	bool invalid = true;
+	while (invalid)
+	{
+		if (choice == "s" || choice == "server" || choice == "host") {
+			Server server;
+			if (server.Init()) {
+				server.Run();
+				invalid = false;
+			}
+		}
+		else if (choice == "c" || choice == "client") {
+			Client client;
+			if (client.Init()) {
+				client.Run();
+				invalid = false;
+			}
+		}
+	}
 }
 
 void Game::GameLoop()

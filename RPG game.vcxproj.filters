@@ -36,6 +36,15 @@
     <ClCompile Include="Area.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\networking test\Client.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\networking test\Server.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BattleManagerOnline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Character.h">
@@ -54,6 +63,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Area.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking test\Client.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking test\Server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BattleManagerOnline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
