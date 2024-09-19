@@ -96,7 +96,7 @@ void Game::LocalPlay()
 			}
 		}
 	}
-	// spin untill the network is established and the game can start
+	// spin until the network is established and the game can start
 	while (!multiplayer)
 	{
 		system("cls");
@@ -153,7 +153,8 @@ void Game::GameLoop()
 		{
 			client->Send(Command::Create(2, "GetPlayers"));
 			for (Character* c : players)
-				msg += c->getName() + " is here too.\n";
+				if (c->getCoordinates() == currentArea->getCoordinates())
+					msg += c->getName() + " is here too.\n";
 		}
 
 		msg += "Where would you like to go?";
@@ -189,18 +190,22 @@ void Game::GameLoop()
 void Game::MoveTo(tuple<int, int> coordinates)
 {
 	auto it = world.find(coordinates);
-	if (it != world.end())
-	{
-		currentArea = it->second;
-		if (currentArea->getType() == 6 || currentArea->getType() == 7)
-			return;
-		int r = rand() % 100;
-		if (currentArea->getEncounterChance() > r && currentArea->getEnemies().size() > 0)
-			StartBattle();
-		return;
-	}
+	if (it == world.end())
+		cout << "You can't go there.\n";
 
-	cout << "You can't go there.\n";
+	/*if (multiplayer)
+	{
+		string cmd = player->getID() + "," + to_string(get<0>(coordinates)) + "," + to_string(get<1>(coordinates));
+		client->Send(Command::Create(3, cmd));
+	}*/
+
+	currentArea = it->second;
+	if (currentArea->getType() == 6 || currentArea->getType() == 7)
+		return;
+	int r = rand() % 100;
+	if (currentArea->getEncounterChance() > r && currentArea->getEnemies().size() > 0)
+		StartBattle();
+
 }
 
 void Game::StartBattle()

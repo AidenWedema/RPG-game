@@ -115,7 +115,6 @@ void Client::Send(Command* cmd)
 
 void Client::ParseCommand(Command* cmd)
 {
-    cout << "Recieved: " << cmd->ToString() << endl;
     switch (cmd->type)
     {
         case 0: // recieve player ID
@@ -132,7 +131,7 @@ void Client::ParseCommand(Command* cmd)
 
         case 2: { // recieve all players
             std::string players = std::string(cmd->data);
-            Game::GetInstance()->GetPlayers().clear();
+            Game::GetInstance()->SetPlayers({});
             while (!players.empty()) {
                 std::string player = players.substr(0, players.find('\n') + 1);
                 players.erase(0, players.find('\n') + 1);
@@ -146,10 +145,10 @@ void Client::ParseCommand(Command* cmd)
         }
 
         case 3: { // move player to new coordinates
-            std::string data = std::string(cmd->data).substr(1, std::string(cmd->data).find('\n') + 1);
-            int id = data[0];
-            int x = std::stoi(data.substr(0, data.find(',')));
-            int y = std::stoi(data.substr(data.find(','), data.size()));
+            std::string data = std::string(cmd->data);
+            int id = std::stoi(data.substr(0, data.find(',')));
+            int x = std::stoi(data.substr(data.find(','), data.find_last_of(',')));
+            int y = std::stoi(data.substr(data.find_last_of(',') + 1));
             for (Character* player : Game::GetInstance()->GetPlayers())
             {
                 if (player->getID() != id)

@@ -81,7 +81,7 @@ bool Server::Init()
     // Perform automatic port forwarding
     if (!UPnP_PortForward(54000)) {
         std::cerr << "Automatic port forwarding failed!" << std::endl;
-        return false;
+        //return false;
     }
 
     // Start listening for incoming connections
@@ -141,6 +141,7 @@ void Server::ParseCommand(Command* cmd, SOCKET clientSocket)
         case 0: { // recieve the player name
             std::string name = std::string(cmd->data);
             Game::GetInstance()->AddPlayer(new Character(name, 0, 0, 0, 0));
+            Send(Command::Create(0, to_string((int)time(0))), clientSocket);
             break;
         }
 
@@ -164,18 +165,15 @@ void Server::ParseCommand(Command* cmd, SOCKET clientSocket)
             int id = std::stoi(data.substr(0, data.find(',')));
             int x = std::stoi(data.substr(data.find(','), data.find_last_of(',')));
             int y = std::stoi(data.substr(data.find_last_of(',') + 1));
-            for (Character* player : Game::GetInstance()->GetPlayers())
+            /*for (Character* player : Game::GetInstance()->GetPlayers())
             {
                 if (player->getID() != id)
                     continue;
                 player->setCoordinates(make_tuple(x, y));
                 break;
-            }
+            }*/
             for (SOCKET socket : clientSockets)
-            {
-                data = std::to_string(id) + "," + std::to_string(x) + "," + std::to_string(y);
                 Send(Command::Create(3, data), socket);
-            }
             break;
         }
 
@@ -192,7 +190,7 @@ bool Server::UPnP_PortForward(unsigned short port)
     struct UPNPUrls urls;
     struct IGDdatas data;
     char lanaddr[64];  // LAN IP address
-    char wanaddr[64];  // LAN IP address
+    char wanaddr[64];
     int error = 0;
 
     // Discover UPnP devices on the network
@@ -203,16 +201,15 @@ bool Server::UPnP_PortForward(unsigned short port)
             std::cout << "UPnP Device found: " << dev->descURL << " (" << dev->st << ")" << std::endl;
             dev = dev->pNext;
         }
-        freeUPNPDevlist(devlist);
 
         if (UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr), wanaddr, sizeof(wanaddr)) == 1) {
             std::cout << "Found valid IGD: " << urls.controlURL << std::endl;
-            std::cout << "Local LAN IP: " << lanaddr << std::endl;
+            std::cout << "Local LAN IP: " << lanaddr << " (use this to connect to players on the same wifi network)" << std::endl;
 
             char externalIP[40];
             if (UPNP_GetExternalIPAddress(urls.controlURL, data.first.servicetype, externalIP) == UPNPCOMMAND_SUCCESS) {
                 if (externalIP[0]) {
-                    std::cout << "External IP: " << externalIP << std::endl;
+                    std::cout << "External IP: " << externalIP << " (use this to connect to players over the internet)" << std::endl;
                 }
                 else {
                     std::cout << "Could not get external IP" << std::endl;
@@ -223,6 +220,8 @@ bool Server::UPnP_PortForward(unsigned short port)
             }
 
             std::string portStr = std::to_string(port);
+            
+            freeUPNPDevlist(devlist);
 
             // Request port forwarding on the given port
             if (UPNP_AddPortMapping(urls.controlURL, data.first.servicetype, portStr.c_str(), portStr.c_str(), lanaddr, "TestServer", "TCP", NULL, "0") == UPNPCOMMAND_SUCCESS) {
