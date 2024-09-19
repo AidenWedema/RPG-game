@@ -6,9 +6,9 @@
 #include <vector>
 #include "Command.h"
 #include "Client.h"
-//#include <miniupnpc/miniupnpc.h>
-//#include <miniupnpc/upnpcommands.h>
-//#include <miniupnpc/upnperrors.h>
+#include <../miniupnpc/miniupnpc.h>
+#include <../miniupnpc/upnpcommands.h>
+#include <../miniupnpc/upnperrors.h>
 #pragma comment(lib, "Ws2_32.lib")
 
 class Server {

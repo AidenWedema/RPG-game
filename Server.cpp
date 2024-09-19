@@ -59,6 +59,8 @@ void Server::handleClient(SOCKET clientSocket) {
 
 bool Server::Init()
 {
+    std::cout << "Starting Server. Please wait..." << std::endl;
+
     // Initialize Winsock
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 
@@ -79,6 +81,7 @@ bool Server::Init()
     // Perform automatic port forwarding
     if (!UPnP_PortForward(54000)) {
         std::cerr << "Automatic port forwarding failed!" << std::endl;
+        return false;
     }
 
     // Start listening for incoming connections
@@ -184,16 +187,16 @@ void Server::ParseCommand(Command* cmd, SOCKET clientSocket)
 
 bool Server::UPnP_PortForward(unsigned short port)
 {
-    /*
     struct UPNPDev* devlist;
     struct UPNPDev* dev;
     struct UPNPUrls urls;
     struct IGDdatas data;
     char lanaddr[64];  // LAN IP address
+    char wanaddr[64];  // LAN IP address
     int error = 0;
 
     // Discover UPnP devices on the network
-    devlist = upnpDiscover(2000, NULL, NULL, 0, 0, &error);
+    devlist = upnpDiscover(2000, NULL, NULL, 0, 0, 2, &error);
     if (devlist) {
         dev = devlist;
         while (dev) {
@@ -202,7 +205,7 @@ bool Server::UPnP_PortForward(unsigned short port)
         }
         freeUPNPDevlist(devlist);
 
-        if (UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr)) == 1) {
+        if (UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr), wanaddr, sizeof(wanaddr)) == 1) {
             std::cout << "Found valid IGD: " << urls.controlURL << std::endl;
             std::cout << "Local LAN IP: " << lanaddr << std::endl;
 
@@ -237,7 +240,6 @@ bool Server::UPnP_PortForward(unsigned short port)
     else {
         std::cerr << "No UPnP devices found on the network" << std::endl;
     }
-    */
 
     return false;
 }

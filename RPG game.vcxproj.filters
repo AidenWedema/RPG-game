@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\miniupnpc">
+      <UniqueIdentifier>{d21be818-bfee-4277-ba22-2d4adae6657e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RPG game.cpp">
@@ -76,6 +79,36 @@
     </ClInclude>
     <ClInclude Include="Command.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="miniupnpc\igd_desc_parse.h">
+      <Filter>Header Files\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="miniupnpc\miniupnpc.h">
+      <Filter>Header Files\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="miniupnpc\miniupnpc_declspec.h">
+      <Filter>Header Files\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="miniupnpc\miniupnpctypes.h">
+      <Filter>Header Files\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="miniupnpc\miniwget.h">
+      <Filter>Header Files\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="miniupnpc\portlistingparse.h">
+      <Filter>Header Files\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="miniupnpc\upnpcommands.h">
+      <Filter>Header Files\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="miniupnpc\upnpdev.h">
+      <Filter>Header Files\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="miniupnpc\upnperrors.h">
+      <Filter>Header Files\miniupnpc</Filter>
+    </ClInclude>
+    <ClInclude Include="miniupnpc\upnpreplyparse.h">
+      <Filter>Header Files\miniupnpc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
