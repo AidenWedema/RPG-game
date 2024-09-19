@@ -31,7 +31,9 @@ public:
 	void SetPlayers(vector<Character*> newPlayers);
 	int GetSeed();
 	void SetSeed(int seed);
-	string GetPlayerName();
+	Character* GetPlayer();
+	void SetCurrentArea(tuple<int, int>);
+	void SetMultiplayer(bool multiplayer);
 
 	// Hash function for tuple<int, int> to use in unordered_map
 	struct tuple_hash {

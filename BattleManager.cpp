@@ -217,7 +217,7 @@ void BattleManager::Battle()
 			Character* target = action->getTarget();
 			Character* user = action->getUser();
 
-			// check if the uesr is dead
+			// check if the user is dead
 			if (user->getHP() <= 0)
 				continue;
 

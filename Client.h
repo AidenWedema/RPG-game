@@ -3,7 +3,8 @@
 #include <thread>
 #include <winsock2.h>
 #include <Ws2tcpip.h>
-#include "../RPG-game/Game.h"
+#include "Game.h"
+#include "Command.h"
 #pragma comment(lib, "Ws2_32.lib")
 
 class Client {
@@ -14,11 +15,13 @@ public:
     bool Init();
     void Run();
     void Listen();
-    void Send(string message);
-    void ParseCommand(string command);
+    void Send(Command* cmd);
+    void ParseCommand(Command* cmd);
+    bool IsValidIP(const std::string& ipAddress);
 
 private:
     WSADATA wsaData;
     SOCKET clientSocket;
     sockaddr_in serverAddr;
+    std::thread listenThread;
 };

@@ -47,7 +47,7 @@ void Game::Start()
 	player->setName(in);
 	system("cls");
 	cout << "Hello " << player->getName() << "\n";
-	cin.ignore();
+	cin.getline(in, 100);
 	system("cls");
 
 	cout << "Do you want to play solo or with friends? (s/f)\n";
@@ -55,11 +55,13 @@ void Game::Start()
 	inStr = in;
 	if (inStr == "f" || inStr == "friends")
 		LocalPlay();
-
-	GenerateWorld();
-	tuple<int, int> coordinates = make_tuple(rand() % 100, rand() % 100);
-	world[coordinates]->setType(7);
-	currentArea = world[coordinates];
+	else
+	{
+		GenerateWorld();
+		tuple<int, int> coordinates = make_tuple(rand() % 100, rand() % 100);
+		world[coordinates]->setType(7);
+		currentArea = world[coordinates];
+	}
 
 	system("cls");
 	GameLoop();
@@ -94,13 +96,22 @@ void Game::LocalPlay()
 			}
 		}
 	}
-	multiplayer = true;
+	// spin untill the network is established and the game can start
+	while (!multiplayer)
+	{
+		system("cls");
+		cout << "Please wait..." << "\n";
+		Sleep(1000);
+		continue;
+	}
+	system("cls");
 }
 
 void Game::GameLoop()
 {
 	while (true)
 	{
+		system("cls");
 		// move to new area
 		vector<string>* options = new vector<string>{"Go north", "Go east", "Go south", "Go west"};
 		if (currentArea->getType() == 6)
@@ -140,7 +151,7 @@ void Game::GameLoop()
 		}
 		if (multiplayer)
 		{
-			client->Send("GetPlayers");
+			client->Send(Command::Create(2, "GetPlayers"));
 			for (Character* c : players)
 				msg += c->getName() + " is here too.\n";
 		}
@@ -324,7 +335,17 @@ void Game::SetSeed(int seed)
 	srand(randomSeed);
 }
 
-string Game::GetPlayerName()
+Character* Game::GetPlayer()
 {
-	return player->getName();
+	return player;
+}
+
+void Game::SetCurrentArea(tuple<int, int> coordinates)
+{
+	currentArea = world[coordinates];
+}
+
+void Game::SetMultiplayer(bool multiplayer)
+{
+	this->multiplayer = multiplayer;
 }
