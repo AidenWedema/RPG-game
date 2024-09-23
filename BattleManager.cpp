@@ -35,15 +35,15 @@ BattleManager::BattleManager()
 	get<2>(allMoves)->push_back(new Move("Ember", 20, 60, 2, true));
 	get<2>(allMoves)->push_back(new Move("Fire", 30, 70, 2, true));
 	get<2>(allMoves)->push_back(new Move("FireBall", 40, 80, 2, true));
-	get<2>(allMoves)->push_back(new Move("Splash", 20, 60, 2, true));
-	get<2>(allMoves)->push_back(new Move("Wave", 20, 60, 2, true));
-	get<2>(allMoves)->push_back(new Move("Tsunami", 20, 60, 2, true));
-	get<2>(allMoves)->push_back(new Move("Spark", 20, 60, 2, true));
+	get<2>(allMoves)->push_back(new Move("Splash", 20, 70, 2, true));
+	get<2>(allMoves)->push_back(new Move("Wave", 25, 90, 2, true));
+	get<2>(allMoves)->push_back(new Move("Tsunami", 30, 100, 2, true));
+	get<2>(allMoves)->push_back(new Move("Spark", 10, 80, 2, true));
 	get<2>(allMoves)->push_back(new Move("Shock", 20, 60, 2, true));
-	get<2>(allMoves)->push_back(new Move("Thunder", 20, 60, 2, true));
-	get<2>(allMoves)->push_back(new Move("Heal", 10, 60, 2, false));
-	get<2>(allMoves)->push_back(new Move("MegaHeal", 20, 60, 2, false));
-	get<2>(allMoves)->push_back(new Move("GigaHeal", 40, 60, 2, false));
+	get<2>(allMoves)->push_back(new Move("Thunder", 50, 70, 2, true));
+	get<2>(allMoves)->push_back(new Move("Heal", 10, 75, 2, false));
+	get<2>(allMoves)->push_back(new Move("MegaHeal", 20, 75, 2, false));
+	get<2>(allMoves)->push_back(new Move("GigaHeal", 40, 75, 2, false));
 
 	// set up defence moves
 	get<3>(allMoves)->push_back(new Move("Defend", 0, 100, 3, false));
@@ -59,63 +59,39 @@ void BattleManager::Setup(Character* player, vector<Character*> friends, vector<
 	this->friends = friends;
 	this->enemies.clear();
 	int amount = rand() % 3 + 1;
+	// copy 1 to 3 enemies to battle
 	for (int i = 0; i < amount; i++)
-		this->enemies.push_back(enemies[rand() % enemies.size()]);
-
-	for (int i = 0; i < enemies.size(); i++)
-		enemies[i]->setID(enemies.size() + i);
+	{
+		Character* enemy = enemies[rand() % enemies.size()];
+		Character* copy = new Character();
+		copy->setName(enemy->getName());
+		copy->setHP(enemy->getHP());
+		copy->setATK(enemy->getATK());
+		copy->setDEF(enemy->getDEF());
+		copy->setSPD(enemy->getSPD());
+		for (Move* move : enemy->getMoves())
+			copy->addMove(move);
+		copy->setID(100 + i);
+		this->enemies.push_back(copy);
+	}
 }
 
 void BattleManager::Start()
 {
 	system("cls");
 
-	// assign moves to each character
-	vector<Character*>* all = GetAllCharacters();
-	for (Character* character : *all)
-	{
-		vector<int> moveIndexes;
-		// get 4 random attack moves
-		for (int i = 0; i < 4; i++)
-		{
-			int r = rand() % get<0>(allMoves)->size();
-			if (moveIndexes.size() == 0 || find(moveIndexes.begin(), moveIndexes.end(), r) == moveIndexes.end())
-			{
-				character->addMove((*get<0>(allMoves))[r]);
-				moveIndexes.push_back(r);
-			}
-			else
-				i--;
-		}
-		// add 3 random special moves
-		moveIndexes.clear();
-		for (int i = 0; i < 3; i++)
-		{
-			int r = rand() % get<1>(allMoves)->size();
-			if (moveIndexes.size() == 0 || find(moveIndexes.begin(), moveIndexes.end(), r) == moveIndexes.end())
-			{
-				character->addMove((*get<1>(allMoves))[r]);
-				moveIndexes.push_back(r);
-			}
-			else
-				i--;
-		}
-		// add 3 random magic moves
-		moveIndexes.clear();
-		for (int i = 0; i < 3; i++)
-		{
-			int r = rand() % get<2>(allMoves)->size();
-			if (moveIndexes.size() == 0 || find(moveIndexes.begin(), moveIndexes.end(), r) == moveIndexes.end())
-			{
-				character->addMove((*get<2>(allMoves))[r]);
-				moveIndexes.push_back(r);
-			}
-			else
-				i--;
-		}
-		// add the defend move
-		character->addMove((*get<3>(allMoves))[0]);
-	}
+	// assign moves to each enemy
+	for (Character* character : enemies)
+		AssignMoves(character);
+
+	// assign moves to the player if they don't have any
+	if (player->getMoves().size() == 0)
+		AssignMoves(player);
+
+	// assign moves to each friend if they don't have any
+	for (Character* character : friends)
+		if (character->getMoves().size() == 0)
+			AssignMoves(character);
 
 	Battle();
 }
@@ -132,6 +108,7 @@ void BattleManager::Battle()
 			msg += ", ";
 	}
 	cout << msg << " attack!\n";
+	cin.clear();
 	cin.ignore();
 	system("cls");
 
@@ -528,9 +505,57 @@ void BattleManager::GetRandomTarget(BattleAction* action)
 	action->setTarget(target);
 }
 
+void BattleManager::AssignMoves(Character* character)
+{
+	vector<int> moveIndexes;
+	// get 4 random attack moves
+	for (int i = 0; i < 4; i++)
+	{
+		int r = rand() % get<0>(allMoves)->size();
+		if (moveIndexes.size() == 0 || find(moveIndexes.begin(), moveIndexes.end(), r) == moveIndexes.end())
+		{
+			character->addMove((*get<0>(allMoves))[r]);
+			moveIndexes.push_back(r);
+		}
+		else
+			i--;
+	}
+	// add 3 random special moves
+	moveIndexes.clear();
+	for (int i = 0; i < 3; i++)
+	{
+		int r = rand() % get<1>(allMoves)->size();
+		if (moveIndexes.size() == 0 || find(moveIndexes.begin(), moveIndexes.end(), r) == moveIndexes.end())
+		{
+			character->addMove((*get<1>(allMoves))[r]);
+			moveIndexes.push_back(r);
+		}
+		else
+			i--;
+	}
+	// add 3 random magic moves
+	moveIndexes.clear();
+	for (int i = 0; i < 3; i++)
+	{
+		int r = rand() % get<2>(allMoves)->size();
+		if (moveIndexes.size() == 0 || find(moveIndexes.begin(), moveIndexes.end(), r) == moveIndexes.end())
+		{
+			character->addMove((*get<2>(allMoves))[r]);
+			moveIndexes.push_back(r);
+		}
+		else
+			i--;
+	}
+	// add the defend move
+	character->addMove((*get<3>(allMoves))[0]);
+}
+
 void BattleManager::Win()
 {
 	cout << "You won!\n";
+	player->setModifiers({});
+	cin.ignore();
+	system("cls");
 }
 
 void BattleManager::Lose()

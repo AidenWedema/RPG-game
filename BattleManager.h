@@ -23,6 +23,7 @@ public:
 	void GetRandomMove(BattleAction* action);
 	void GetPlayerTarget(BattleAction* action);
 	void GetRandomTarget(BattleAction* action);
+	void AssignMoves(Character* character);
 	void Win();
 	void Lose();
 	vector<Character*>* GetAllCharacters();

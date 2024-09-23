@@ -284,13 +284,14 @@ int Game::GetPlayerInput(string pretext, vector<string>* options)
 		string msg = pretext + "\n";
 		int in;
 		for (int i = 0; i < options->size(); i++)
-		{
 			msg += to_string(i) + ": " + (*options)[i] + "\n";
-		}
+
 		cout << msg;
 		try
 		{
-			cin >> in;
+			char inStr[1024];
+			cin.getline(inStr, 1024);
+			in = stoi(inStr);
 			if (in < 0 || in >= options->size())
 			{
 				cout << "Invalid input\n";
@@ -303,6 +304,7 @@ int Game::GetPlayerInput(string pretext, vector<string>* options)
 		catch (exception e)
 		{
 			cout << "Invalid input\n";
+			cin.clear();
 			cin.ignore();
 			system("cls");
 		}
