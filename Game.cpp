@@ -183,6 +183,39 @@ void Game::GameLoop()
 			case 4:
 				player->setHP(100);
 				break;
+			// get party member
+			case 5:
+				if (rand() % 2 == 0)
+				{
+					vector<Character*> c = { new Character("Jimmy", 100, 10, 0, 2), new Character("Jimbo", 100, 7, 10, 2), new Character("Jim", 100, 9, 3, 10) };
+					int tryCount = 0;
+					int i = rand() % c.size();
+					Character* f = c[i];
+					vector<string> names;
+					for (Character* c : friends)
+						names.push_back(c->getName());
+
+					while (tryCount < 10)
+					{
+						if (find(names.begin(), names.end(), f->getName()) == names.end())
+							break;
+						tryCount++;
+						i++;
+						f = c[i % c.size()];
+					}
+					if (tryCount < 10)
+					{
+						friends.push_back(f);
+						cout << f->getName() << " joined your party!\n";
+					}
+					else
+						cout << "Your party is full!\n";
+				}
+				else
+					cout << "You had a great time at the tavern!\n";
+				cin.ignore();
+				system("cls");
+				break;
 		}
 	}
 }
